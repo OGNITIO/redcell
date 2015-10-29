@@ -1,0 +1,24 @@
+{
+    "id": "elasticsearch",
+    "container": {
+        "docker": {
+            "image": "localhost:5000/elasticsearch",
+            "privileged": true,
+            "network": "BRIDGE",
+            "portMappings": [
+                {"containerPort": 9200, "hostPort": 31020, "servicePort": 0, "protocol": "tcp"}
+            ],
+            "forcePullImage": true
+        }
+    },
+    "cpus": 1,
+    "mem": 1024,
+    "constraints": [
+        [
+            "hostname",
+            "LIKE",
+            "mesos-master-3.ognitio.net"
+        ]
+    ],
+    "cmd": "/elasticsearch/bin/elasticsearch"
+}
