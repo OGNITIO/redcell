@@ -1,0 +1,37 @@
+{
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "localhost:5000/dev/grafana",
+            "privileged": true,
+            "network": "BRIDGE",
+            "portMappings": [
+                { "containerPort": 3000, "hostPort": 31030, "servicePort": 0, "protocol": "tcp" }
+            ],
+            "parameters": [
+                { "key": "hostname", "value": "grafana.weave.local" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
+            ],
+            "forcePullImage": false
+        },
+        "volumes": [
+            {
+                "containerPath": "/var/opt/grafana",
+                "hostPath": "/var/volumes/grafana",
+                "mode": "RW"
+            }
+        ]
+    },
+    "id": "grafana",
+    "instances": 1,
+    "cpus": 0.5,
+    "mem": 512,
+    "constraints": [
+        [
+            "hostname",
+            "LIKE",
+            "mesos-master-1.ognitio.net"
+        ]
+    ],
+    "cmd": "/usr/sbin/grafana-server --config=/etc/grafana/grafana.ini"
+}
