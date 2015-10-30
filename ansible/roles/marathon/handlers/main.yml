@@ -1,0 +1,18 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Handlers file for marathon service
+# All the tasks for Start/Restart/Stop the service
+# are defined below
+#
+
+# Task for start marathon
+- name: Start marathon
+  service: name=marathon state=started
+
+# Task for stop marathon
+- name: Stop marathon
+  service: name=marathon state=stopped
+
+# Task for restart marathon
+- name: Restart marathon
+  service: name=marathon state=stopped

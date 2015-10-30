@@ -1,0 +1,17 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables for
+# the marathon role are defined.
+#
+
+# Definition of the JAVA_HOME path
+marathon_java_home_path: "/usr/lib/jvm/java-8-openjdk-amd64/"
+
+# Definition of the JAVA_OPTS
+marathon_java_opts_var: "-Xmx512m"
+
+# Definition of the HTTP port of marathon
+marathon_http_port: "8080"
+
+# Definition of the High Availability mode
+marathon_high_availability_mode: true

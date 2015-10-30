@@ -1,0 +1,19 @@
+## Marathon scheduler options
+
+# Definition of the JAVA_HOME path
+export JAVA_HOME={{marathon_java_home_path}}
+
+# Definition of the JAVA_OPTS
+export JAVA_OPTS={{marathon_java_opts_var}}
+
+# Definition of the masters
+export MARATHON_MASTER=zk://{% for host in groups['all'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
+
+# Definition of Marathon's znode in the zookeepers
+export MARATHON_ZK=zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon
+
+# Definition of http_port of Marathon
+export MARATHON_HTTP_PORT={{marathon_http_port}}
+
+# Definition of the WEBUI Url
+export MARATHON_WEBUI_URL="{{inventory_hostname}}:8080"
