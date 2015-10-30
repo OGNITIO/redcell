@@ -1,0 +1,19 @@
+## Default mesos configuration which will be used for the master
+## and the slave.
+
+# Definition of the ULIMIT of the process
+ULIMIT="{{mesos_ulimit}}"
+
+# Definition of the quorum of master
+ZK=zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
+
+# Definition of the IP address
+IP={{mesos_ip_address}}
+
+## Extra environment variables definition
+
+# Definition of Mesos working directory
+export MESOS_WORK_DIR={{mesos_work_dir}}
+
+# Definition of the hostname to avoid resolve dns problems
+export MESOS_HOSTNAME={{ansible_hostname}}

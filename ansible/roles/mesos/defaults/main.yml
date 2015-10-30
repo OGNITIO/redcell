@@ -1,0 +1,34 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables
+# for the mesos automation role are defined. 
+#
+
+# Setting up the mesos version.
+mesos_version: "0.25.0"
+
+# Setting the /var/lib/mesos working directory because '/var' is a standard subdirectory
+# of the root directory in Linux that isn't shared over the network. And '/var/lib/'
+# containes dynamic data libraries and files.
+mesos_work_dir: /var/lib/mesos
+
+# Definition of the quorum which is the number of master in the cluster.
+mesos_master_quorum: 2
+
+# Definition of the master port
+mesos_master_port: 5050
+
+# Definition of the slave port
+mesos_slave_port: 5051
+
+# Definition of the ULIMIT of the process
+mesos_ulimit: "-n 8191"
+
+# Definition of the mesos IP address
+mesos_ip_address: "{{ansible_eth0.ipv4.address}}"
+
+# Definition of the CPUs ressources
+mesos_slave_cpus: 4
+
+# Definition of the RAM ressources (MB)
+mesos_slave_mem: 3200

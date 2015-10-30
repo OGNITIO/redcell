@@ -1,0 +1,86 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# List of tasks for the installation of
+# Apache Mesos orchestrer.
+#
+
+- name: Add apt_key for repos.mesosphere.io repo
+  apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
+
+- name: Add mesosphere repository
+  apt_repository: repo="deb http://repos.mesosphere.io/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}} main" state=present
+
+- name: Install packages needed for mesos
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - python-setuptools
+    - python-dev
+    - python-pip
+
+- name: Install Apache Mesos
+  apt: pkg="mesos" state=present install_recommends=no
+
+- name: Install mesos.cli
+  pip: name=mesos.cli
+
+- name: Removing the configuration files
+  file: path={{item}} state=absent
+  with_items:
+    - "/etc/mesos/zk"
+    - "/etc/mesos-master/quorum"
+    - "/etc/mesos-master/work_dir"
+    - "/etc/mesos-slave/master"
+
+- name: Copy mesos configuration
+  template: src=default_mesos_conf.j2 dest=/etc/default/mesos
+
+  
+## MESOS-MASTER GROUP ONLY
+- name: Copy mesos-master configuration
+  template: src=default_mesos_master_conf.j2 dest=/etc/default/mesos-master
+
+- name: Copy syslog configuration file
+  copy: src=syslog-mesos-master.conf dest=/etc/syslog-ng/conf.d/mesos-master.conf
+
+- name: Set the mesos-slave.override to manual
+  template: src=manual.j2 dest=/etc/init/mesos-slave.override
+  when: "'mesos-slave' not in group_names"
+  
+- name: Remove mesos-master.override
+  file: path="/etc/init/mesos-master.override" state=absent
+  when: "'mesos-master' in group_names"
+
+- name: Stop mesos-slave service
+  service: name=mesos-slave state=stopped
+  when: "'mesos-slave' not in group_names"
+  
+- name: Start mesos-master
+  service: name=mesos-master state=started
+  when: "'mesos-master' in group_names"
+
+
+## MESOS-SLAVE GROUP ONLY
+- name: Copy the mesos-slave configuration
+  template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
+
+- stat: path=/etc/init/mesos-slave.override
+  register: slave_file
+  
+- name: Copy syslog configuration file
+  copy: src=syslog-mesos-slave.conf dest=/etc/syslog-ng/conf.d/mesos-slave.conf
+
+- name: Copy mesos-master.override file
+  template: src=manual.j2 dest=/etc/init/mesos-master.override
+  when: "'mesos-master' not in group_names"
+
+- name: Stop Mesos-master service
+  service: name=mesos-master state=stopped
+  when: "'mesos-master' not in group_names"
+
+- name: Remove mesos-slave.override file
+  file: path="/etc/init/mesos-slave.override" state=absent
+  when: "'mesos-slave' in group_names"
+  
+- name: Start the mesos-slave service
+  service: name=mesos-slave state=started
+  when: "'mesos-slave' in group_names"

@@ -1,0 +1,26 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Handlers file for the mesos installation
+# and configuration. All the tasks for Start/Restart/Stop
+# the mesos master and slave are listed below.
+#
+
+## Mesos master handlers
+- name: Start mesos-master
+  service: name=mesos-master state=started
+
+- name: Restart mesos-master
+  service: name=mesos-master state=restarted
+
+- name: Stop mesos-master
+  service: name=mesos-master state=stopped
+  
+## Mesos slave handlers
+- name: Start mesos-slave
+  service: name=mesos-slave state=started
+
+- name: Restart mesos-slave
+  service: name=mesos-slave state=restarted
+
+- name: Stop mesos-slave
+  service: name=mesos-slave state=stopped
