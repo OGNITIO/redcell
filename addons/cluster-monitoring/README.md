@@ -1,1 +1,1 @@
-# Ognitio cluster related addons
+# Cluster related addons for monitoring
