@@ -1,0 +1,17 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# List of tasks for create and configure the users.
+#
+
+- name : Creating the primary group
+  group : name={{users_primary_group}} state=present
+
+- name : Creating the users
+  user: name="{{item.username}}" group="{{users_primary_group}}" groups="{{item.groups | join(',')}}" shell="{{item.shell if item.shell is defined else users_default_shell}}" password="$1$SomeSalt$yM7IPrbWe.MkFDhmXzMpR." comment="{{item.name}}" uid="{{item.uid}}" createhome="{{'yes' if users_create_home_directory else 'no'}}"
+  with_items: users
+
+- name : "Uploading ssh keys {{item.0.username}}"
+  authorized_key: user="{{item.0.username}}" key="{{ lookup('file', item.1) }}"
+  with_subelements:
+    - users
+    - ssh_keys

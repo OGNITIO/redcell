@@ -1,0 +1,21 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Vars file for the data structure definition.
+# Listing of users
+#
+
+# Define the users
+users:
+  - username: eddy.zagabe
+    name: Eddy Zagabe
+    groups: "['{{users_primary_group}}', 'sudo']"
+    uid: 1001
+    ssh_keys:
+      - eddy-zagabe.key
+
+  - username: lucien.zagabe
+    name: Lucien Zagabe
+    groups: "['{{users_primary_group}}', 'sudo']"
+    uid: 1002
+    ssh_keys:
+      - lucien-zagabe.key

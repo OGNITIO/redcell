@@ -1,0 +1,14 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables for the
+# users role are defined.
+#
+
+# Definition of the primary group
+users_primary_group : ognitio
+
+# Definition of the default shell
+users_default_shell : /bin/bash
+
+# Setting the home directory creation
+users_create_home_directory : yes
