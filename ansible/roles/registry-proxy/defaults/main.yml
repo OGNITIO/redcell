@@ -1,0 +1,14 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables for registry-proxy
+# role are defined
+#
+
+# Definition of the FORWARD_PORT env variable
+forward_port: 5000
+
+# Definition of the REGISTRY_HOST env variable
+registry_hostname: registry.marathon.mesos
+
+# Definition of the REGISTRY_PORT env variable
+registry_port: 5000
