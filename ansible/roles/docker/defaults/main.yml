@@ -1,0 +1,8 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+
+# Definition of the distribution for the repository source list
+docker_distrib_repo: debian
+
+# Definition of the release for the repository source list
+docker_release_repo: jessie
