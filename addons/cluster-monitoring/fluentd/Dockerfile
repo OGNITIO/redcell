@@ -31,4 +31,4 @@ RUN mkdir -p /td-agent/tmp # for access log pos
 RUN /usr/sbin/td-agent-gem install fluent-plugin-kafka # Kafka fluentd plugin
 ADD conf/fluentd.conf /etc/fluentd/fluentd.conf
 
-CMD ["/usr/sbin/td-agent", "--config", "/etc/td-agent/td-agent.conf"]
+CMD ["/usr/sbin/td-agent", "--config", "/etc/fluentd/fluentd.conf"]
