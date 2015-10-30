@@ -1,0 +1,30 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables
+# needed for the Zookeeper configuration are defined.
+#
+
+# Definition of the ticktime which is used to do heartbeats
+# and the minimum timeout session (twice the ticktime)
+zookeeper_tick_time: 2000
+
+# Definition of the data dir which is the data directory of
+# Zookeeper. (Snapshots, transaction log)
+zookeeper_data_dir: /var/lib/zookeeper
+
+# Definition of the zookeeper client port
+zookeeper_client_port: 2181
+
+# Definition of the timeouts that Zookeeper uses to limit the
+# length of time of the Zookeeper servers in quorum have to
+# connect. (Don't forget to set the zookeeper_standalone
+# variable to 'false')
+zookeeper_init_limit: 5
+
+# Definition of the synchronisation limit which is the limit
+# how far out of date a server can be from the leader. (Don't
+# forget to set the zookeeper_standalone to 'false')
+zookeeper_sync_limit: 2
+
+# Set to true if the zookeeper will run in standalone
+zookeeper_standalone: false
