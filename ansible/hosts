@@ -1,0 +1,37 @@
+# Author : zagabe.ed@gmail.com
+
+# 'all' the remote hosts
+[all]
+ns3003350.ip-5-196-75.eu var_hostname=orza-node1 ansible_ssh_user=rootie
+ns3003361.ip-5-196-75.eu var_hostname=orza-node2 ansible_ssh_user=rootie
+ns3003369.ip-5-196-75.eu var_hostname=orza-node3 ansible_ssh_user=rootie
+ns3003382.ip-5-196-75.eu var_hostname=orza-node4 ansible_ssh_user=rootie
+
+# Hosts in 'zookeeper' group
+[zookeeper]
+ns3003350.ip-5-196-75.eu zoo_id=1
+ns3003361.ip-5-196-75.eu zoo_id=2
+ns3003369.ip-5-196-75.eu zoo_id=3
+
+# Hosts 'mesos-master' group
+[mesos-master]
+ns3003350.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003361.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003369.ip-5-196-75.eu ansible_ssh_user=rootie
+
+# Hosts 'mesos-slave' group
+[mesos-slave]
+ns3003350.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003361.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003369.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003382.ip-5-196-75.eu ansible_ssh_user=rootie
+
+# Hosts 'marathon' group
+[marathon]
+ns3003350.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003361.ip-5-196-75.eu ansible_ssh_user=rootie
+ns3003369.ip-5-196-75.eu ansible_ssh_user=rootie
+
+# Hosts 'mesos-dns' group
+[mesos-dns]
+ns3003350.ip-5-196-75.eu

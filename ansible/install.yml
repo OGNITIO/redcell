@@ -1,0 +1,45 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+
+- name: Hosts default configuration
+  hosts: all
+  sudo: yes
+  roles:
+    - hostname
+    - users
+    - sudoers
+    - apt
+    - debian-auto-upgrade
+    - docker
+    - telegraf
+    - registry-proxy
+
+
+- name: Mesos-DNS
+  hosts: [mesos-dns, all]
+  sudo: yes
+  roles:
+    - mesos-dns
+   
+- name: Apache Zookeeper
+  hosts: zookeeper
+  sudo: yes
+  roles:
+    - zookeeper
+    
+- name: Apache Mesos masters
+  hosts: mesos-master
+  sudo: yes
+  roles:
+    - mesos
+
+- name: Apache Mesos slaves
+  hosts: mesos-slave
+  sudo: yes
+  roles:
+    - mesos
+
+- name: Marathon schedulers
+  hosts: marathon
+  sudo: yes
+  roles:
+    - marathon

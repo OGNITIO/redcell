@@ -1,0 +1,11 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+
+- name: Rebooting all hosts
+  hosts: all
+  sudo: yes
+  tasks:
+    - name: Restarting the hosts
+      command: shutdown -r now "Ansible updates triggered"
+      ignore_errors: true
+    - name: Waiting for restart (1m20s)
+      pause: seconds=80
