@@ -3,13 +3,13 @@
         "type": "DOCKER",
         "docker": {
             "network": "BRIDGE",
-            "image": "localhost:5000/dev/haproxy",
+            "image": "mesos-master-1.ognitio.net:5000/haproxy",
             "forcePullImage": true,
             "parameters": [
                 { "key": "hostname", "value": "haproxy.weave.local" },
-                { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24" },
                 { "key": "env", "value": "MARATHON_URL=mesos-master-1.ognitio.net" },
-                { "key": "env", "value": "MARATHON_URL=8080" }
+                { "key": "env", "value": "MARATHON_PORT=8080" }
             ]
         },
         "volumes": [
@@ -21,7 +21,7 @@
         ]
     },
     "id": "haproxy",
-    "instances": 1,
+    "instances": 3,
     "cpus": 1,
     "mem": 512,
     "constraints": [
