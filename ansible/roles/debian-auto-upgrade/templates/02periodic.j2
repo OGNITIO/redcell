@@ -1,0 +1,14 @@
+// Enable the update/upgrade script (0=disable)
+APT::Periodic::Enable "1";
+
+// Do "apt-get update" automatically every n-days (0=disable)
+APT::Periodic::Update-Package-Lists "{{periodic_update_package}}";
+
+// Run the "unattended-upgrade" security upgrade script
+APT::Periodic::Unattended-Upgrade "{{periodic_security_upgrade_package}}";
+
+// Do "apt-get autoclean" every n-days (0=disabled)
+APT::Periodic::AutocleanInterval "{{periodic_autoclean}}";
+
+// Send report mail
+APT::Periodic::Verbose "{{periodic_mail_verbose}}";

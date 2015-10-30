@@ -1,0 +1,29 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# List of tasks to install and configure apt auto-upgrade
+#
+
+- name: Install unattended-upgrades and apt-listchanges
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - unattended-upgrades
+    - apt-listchanges
+
+- name: Remove default configuration
+  file: path={{item}} state=absent
+  with_items:
+    - "/etc/apt/apt.conf.d/20auto-upgrades"
+    - "/etc/apt/apt.conf.d/02periodic"
+    - "/etc/apt/listchanges.conf"
+
+- name: Copy 20auto-upgrades
+  template: src=20auto-upgrades.j2 dest=/etc/apt/apt.conf.d/20auto-upgrades
+
+- name: Copy 02periodic
+  template: src=02periodic.j2 dest=/etc/apt/apt.conf.d/02periodic
+
+- name: Copy listchanges.conf
+  template: src=listchanges.conf.j2 dest=/etc/apt/listchanges.conf
+
+- name: Launch unattended-upgrade
+  command: unattended-upgrade -d
