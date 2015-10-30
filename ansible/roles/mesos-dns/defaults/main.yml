@@ -1,0 +1,18 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Default file where all the variables for
+# mesos-dns role are defined.
+#
+
+# Definition of the refreshSeconds which is the frequency at which Mesos-DNS
+# updates DNS records.
+mesos_dns_refresh_seconds: 30
+
+# Definition of the domain name for the Mesos cluster
+mesos_dns_domain_name: "mesos"
+
+# Definition of the port number on which Mesos-DNS will listen
+mesos_dns_port: "53"
+
+# Definition of the time to sleep before restarting the service
+mesos_dns_restart_sec: "20"
