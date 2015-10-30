@@ -1,0 +1,13 @@
+# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
+#
+# Install necessary packages
+#
+
+- name: Install requirements
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - apt-transport-https
+    - wget
+    - curl
+    - unzip
+    - syslog-ng
