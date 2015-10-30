@@ -1,0 +1,27 @@
+{
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "localhost:5000/dev/kibana",
+            "privileged": true,
+            "network": "BRIDGE",
+            "parameters": [
+                { "key": "hostname", "value": "kibana.weave.local" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
+            ],
+            "forcePullImage": false
+        }
+    },
+    "id": "kibana",
+    "instances": 1,
+    "cpus": 0.5,
+    "mem": 512,
+    "constraints": [
+        [
+            "hostname",
+            "LIKE",
+            "mesos-master-1.ognitio.net"
+        ]
+    ],
+    "cmd": "/kibana-4.0.2-linux-x64/bin/kibana -e elasticsearch.weave.local:9200"
+}
