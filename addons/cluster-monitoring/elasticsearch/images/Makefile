@@ -1,6 +1,6 @@
 .PHONY: build push
 
-IMAGE = elastisearch
+IMAGE = elasticsearch
 TAG = latest
 
 build:
