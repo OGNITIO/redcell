@@ -19,8 +19,8 @@ RUN apt-get update && \
 ##
 
 RUN cd / \
-    && curl -O https://download.elastic.co/kibana/kibana/kibana-4.0.2-linux-x64.tar.gz \
-    && tar xf kibana-4.0.2-linux-x64.tar.gz \
-    && rm kibana-4.0.2-linux-x64.tar.gz
+    && curl -O https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz \
+    && tar xf kibana-4.2.0-linux-x64.tar.gz \
+    && rm kibana-4.2.0-linux-x64.tar.gz
 
 CMD ["echo done"]
