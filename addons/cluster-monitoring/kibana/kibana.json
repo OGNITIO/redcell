@@ -2,14 +2,17 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/kibana",
+            "image": "mesos-master-1.ognitio.net:5000/containers/kibana",
             "privileged": true,
             "network": "BRIDGE",
             "parameters": [
                 { "key": "hostname", "value": "kibana.weave.local" },
                 { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
             ],
-            "forcePullImage": false
+            "portMappings": [
+                {"containerPort": 5601, "hostPort": 31020, "servicePort": 0, "protocol": "tcp"}
+            ],
+            "forcePullImage": true
         }
     },
     "id": "kibana",
@@ -23,5 +26,5 @@
             "mesos-master-1.ognitio.net"
         ]
     ],
-    "cmd": "/kibana-4.0.2-linux-x64/bin/kibana -e elasticsearch.weave.local:9200"
+    "cmd": "/kibana-4.2.0-linux-x64/bin/kibana -e http://elasticsearch.weave.local:9200"
 }
