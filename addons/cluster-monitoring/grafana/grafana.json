@@ -12,7 +12,7 @@
                 { "key": "hostname", "value": "grafana.weave.local" },
                 { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
             ],
-            "forcePullImage": false
+            "forcePullImage": true
         },
         "volumes": [
             {
