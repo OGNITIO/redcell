@@ -1,0 +1,30 @@
+{
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "mesos-master-1.ognitio.net:5000/containers/chronos",
+            "privileged": true,
+            "network": "BRIDGE",
+            "portMappings": [
+                { "containerPort": 4400, "hostPort": 31100, "servicePort": 0, "protocol": "tcp" }
+            ],
+            "parameters": [
+                { "key": "hostname", "value": "chronos.weave.local" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24" }
+            ],
+            "forcePullImage": true
+        }
+    },
+    "id": "chronos",
+    "instances": 1,
+    "cpus": 0.5,
+    "mem": 512,
+    "constraints": [
+        [
+            "hostname",
+            "LIKE",
+            "mesos-master-1.ognitio.net"
+        ]
+    ],
+    "cmd": "/usr/bin/chronos run_jar --http_port 4400 --master zk://mesos-master-1.ognitio.net:2181,mesos-master-2.ognitio.net:2181,mesos-master-3.ognitio.net:2181/mesos --zk_hosts mesos-master-1.ognitio.net:2181,mesos-master-2.ognitio.net:2181,mesos-master-3.ognitio.net:2181"
+}
