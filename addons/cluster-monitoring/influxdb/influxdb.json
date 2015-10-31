@@ -2,17 +2,17 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/influxdb",
+            "image": "mesos-master-1.ognitio.net:5000/containers/influxdb",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
-                { "containerPort": 8086, "hostPort": 31042, "servicePort": 0, "protocol": "tcp" }
+                { "containerPort": 8086, "hostPort": 31000, "servicePort": 0, "protocol": "tcp" }
             ],
             "parameters": [
                 { "key": "hostname", "value": "influxdb.weave.local" },
                 { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" },
                 { "key": "env", "value": "PRE_CREATE_DB=telegraf" },
-                { "key": "env", "value": "FORCE_HOSTNAME=auto" }
+                { "key": "env", "value": "FORCE_HOSTNAME=influxdb" }
             ],
             "forcePullImage": true
         },
