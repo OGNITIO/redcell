@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/dev/grafana",
+            "image": "localhost:5000/containers/grafana",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [

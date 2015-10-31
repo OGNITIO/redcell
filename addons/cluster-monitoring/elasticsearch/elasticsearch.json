@@ -2,7 +2,7 @@
     "id": "elasticsearch",
     "container": {
         "docker": {
-            "image": "localhost:5000/elasticsearch",
+            "image": "localhost:5000/containers/elasticsearch",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [

@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/dev/kibana",
+            "image": "localhost:5000/containers/kibana",
             "privileged": true,
             "network": "BRIDGE",
             "parameters": [

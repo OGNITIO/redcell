@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/dev/influxdb",
+            "image": "localhost:5000/containers/influxdb",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
