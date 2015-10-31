@@ -1,2 +1,3 @@
 TODO:
         - Elasticsearch framework: Support mesos 0.25.0 https://github.com/mesos/elasticsearch/issues/338
+        - Retiring Data (+ hot index) : https://www.elastic.co/guide/en/elasticsearch/guide/current/retiring-data.html
