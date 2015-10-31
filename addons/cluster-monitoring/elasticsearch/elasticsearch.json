@@ -2,9 +2,13 @@
     "id": "elasticsearch",
     "container": {
         "docker": {
-            "image": "localhost:5000/containers/elasticsearch",
+            "image": "mesos-master-1.ognitio.net:5000/containers/elasticsearch",
             "privileged": true,
             "network": "BRIDGE",
+            "parameters": [
+                { "key": "hostname", "value": "elasticsearch.weave.local" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
+            ],
             "portMappings": [
                 {"containerPort": 9200, "hostPort": 31020, "servicePort": 0, "protocol": "tcp"}
             ],
@@ -20,5 +24,5 @@
             "mesos-master-3.ognitio.net"
         ]
     ],
-    "cmd": "/elasticsearch/bin/elasticsearch"
+    "cmd": "/docker-entrypoint.sh elasticsearch --network.host 0.0.0.0"
 }
