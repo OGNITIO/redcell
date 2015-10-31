@@ -28,7 +28,7 @@ RUN echo "deb http://packages.treasuredata.com/2/debian/jessie/ jessie contrib" 
 RUN apt-get update
 RUN apt-get install -y --force-yes td-agent build-essential gcc
 RUN mkdir -p /td-agent/tmp # for access log pos
-RUN /usr/sbin/td-agent-gem install fluent-plugin-kafka # Kafka fluentd plugin
+RUN /usr/sbin/td-agent-gem install fluent-plugin-elasticsearch # Kafka fluentd plugin
 ADD conf/fluentd.conf /etc/fluentd/fluentd.conf
 
 CMD ["/usr/sbin/td-agent", "--config", "/etc/fluentd/fluentd.conf"]
