@@ -18,5 +18,8 @@
 - name: Building fluentd docker image
   command: docker build -t fluentd-es /tmp/fluentd
 
+- name: Create working directory
+  file: path=/var/lib/fluentd state=directory mode=0755
+
 - name: Run docker command
-  command: docker run --restart=always -d -v /var/log:/var/log:ro fluentd-es
+  command: docker run --net=host --restart=always -d -v /var/log:/var/log:ro -v /var/lib/fluentd:/var/lib/fluentd:rw fluentd-es
