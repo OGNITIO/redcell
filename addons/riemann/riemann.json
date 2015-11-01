@@ -1,0 +1,19 @@
+{
+    "container": {
+        "docker": {
+            "image": "mesos-master-1.ognitio.net:5000/containers/riemann",
+            "privileged": true,
+            "network": "BRIDGE",
+            "parameters": [
+                { "key": "hostname", "value": "riemann.weave.local" },
+                { "key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24" }
+            ],
+            "forcePullImage": true
+        }
+    },
+    "id": "riemann",
+    "cpus": 1,
+    "mem": 1024,
+    "instances": 1,
+    "cmd": "/usr/bin/riemann /etc/riemann/riemann.config"
+}
