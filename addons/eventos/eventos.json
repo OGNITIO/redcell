@@ -1,0 +1,28 @@
+{
+    "container": {
+        "type": "DOCKER",
+        "docker": {
+            "image": "mesos-master-1.ognitio.net:5000/containers/eventos",
+            "network": "BRIDGE",
+            "parameters": [
+                {"key": "hostname", "value": "eventos.weave.local"},
+                {"key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24"}
+            ],
+            "portMappings": [
+                {"containerPort": 1337, "hostPort": 31200, "servicePort": 0, "protocol": "tcp"}
+            ],
+            "forcePullImage": true
+        }
+    },
+    "id": "eventos",
+    "instances": 1,
+    "cpus": 0.5,
+    "mem": 512,
+    "constraints": [
+        [
+            "hostname",
+            "UNIQUE"
+        ]
+    ],
+    "cmd": "/go/bin/eventos -logtostderr -host 0.0.0.0 -port 1337 -riemann riemann.weave.local:5554"
+}
