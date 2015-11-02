@@ -6,7 +6,9 @@
             "network": "BRIDGE",
             "parameters": [
                 {"key": "hostname", "value": "eventos.weave.local"},
-                {"key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24"}
+                {"key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24"},
+                {"key": "env", "value": "SENTRY_PROJECT=ognitio"},
+                {"key": "env", "value": "SENTRY_DSN=https://key:secret@app.getsentry.com"}
             ],
             "portMappings": [
                 {"containerPort": 1337, "hostPort": 31200, "servicePort": 0, "protocol": "tcp"}
