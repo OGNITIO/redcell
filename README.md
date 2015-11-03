@@ -5,12 +5,17 @@ automate the deployment process of our clusters. As we run Apache Mesos
 and a few of his frameworks for scheduling, we plan to continuously
 share publicly related templates and scripts through this directory.
 
+### Status
+
+This project is undergoing heavy refactoring, hardening and testing
+and isn't even considered alpha.
+
 ### Technology stack
 
 We mainly rely on [Ansible](https://github.com/ansible/ansible) to
 configure our VMs. 
 
-The following list contains some of the projects that composed our
+The following list contains some of the projects that composes our
 stack: 
 
 - Consensus
@@ -38,7 +43,7 @@ stack:
 - Container registry
     - [Distribution](https://github.com/docker/distribution): Docker toolset to pack, ship, store, and deliver content
 
-- Service discovery and Load balancing
+- Service discovery and load balancing
     - [HAProxy](http://www.haproxy.org/): TCP/HTTP Load Balancer
     - [Mesos DNS](http://mesosphere.github.io/mesos-dns/): DNS-based service discovery for Mesos
 
@@ -48,5 +53,5 @@ stack:
 ### Further work
 
 - Authorization and authentication
-- Secret distribution
+- Secret files distribution
 - Finer cloud providers deployment support (GCE, AWS, ...)
