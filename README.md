@@ -7,13 +7,14 @@ share publicly related templates and scripts through this directory.
 
 ### Technology stack
 
-We mainly rely on [Ansible](https://github.com/ansible/ansible) to configure VMs.
+We mainly rely on [Ansible](https://github.com/ansible/ansible) to
+configure our VMs. 
 
 The following list contains some of the projects that composed our
 stack: 
 
 - Consensus
-    - [ZooKeeper](https://zookeeper.apache.org/)
+    - [Apache ZooKeeper](https://zookeeper.apache.org/): Distributed systems coordination
 
 - Resource management
     - [Apache Mesos](http://mesos.apache.org/)
@@ -28,21 +29,21 @@ stack:
         - [Telegraf](https://github.com/influxdb/telegraf): Plugin-driven server agent for reporting metrics
         - [Fluentd](http://www.fluentd.org/): Data collector
     - Storage
+        - [InfluxDB](https://influxdb.com/): Distributed time series database
         - [Elasticsearch](https://www.elastic.co/)
-        - [InfluxDB](https://influxdb.com/)
     - Visualization
         - [Kibana](https://www.elastic.co/products/kibana)
         - [Grafana](http://grafana.org/)
 
 - Container registry
-    - [Distribution](https://github.com/docker/distribution)
+    - [Distribution](https://github.com/docker/distribution): Docker toolset to pack, ship, store, and deliver content
 
 - Service discovery and Load balancing
     - [HAProxy](http://www.haproxy.org/): TCP/HTTP Load Balancer
     - [Mesos DNS](http://mesosphere.github.io/mesos-dns/): DNS-based service discovery for Mesos
 
 - Application isolation
-    - [Weave](http://weave.works/)
+    - [Weave](http://weave.works/): Network of Docker containers
 
 ### Further work
 
