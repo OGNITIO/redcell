@@ -24,10 +24,12 @@ stack:
 - Resource management
     - [Apache Mesos](http://mesos.apache.org/)
 
-- Scheduling
+- Scheduling (i.e. Mesos frameworks)
     - [Marathon](https://mesosphere.github.io/marathon/): Long running services
     - [Aurora](http://aurora.apache.org/): Long-running services and cron jobs
     - [Chronos](http://mesos.github.io/chronos/): Cron jobs
+    - [Kafka](https://github.com/mesos/kafka): Apache Kafka on Apache Mesos
+    - [Elasticsearch](https://github.com/mesos/elasticsearch): Elasticsearch on Apache Mesos
 
 - Logging and metrics
     - Transport
