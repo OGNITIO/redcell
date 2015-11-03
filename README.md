@@ -34,13 +34,13 @@ stack:
 - Logging and metrics
     - Transport
         - [Telegraf](https://github.com/influxdb/telegraf): Plugin-driven server agent for reporting metrics
-        - [Fluentd](http://www.fluentd.org/): Data collector
+        - [Fluentd](http://www.fluentd.org/): Open source data collector
     - Storage
         - [InfluxDB](https://influxdb.com/): Distributed time series database
-        - [Elasticsearch](https://www.elastic.co/)
+        - [Elasticsearch](https://www.elastic.co/): Distributed, RESTful Search Engine
     - Visualization
         - [Kibana](https://www.elastic.co/products/kibana)
-        - [Grafana](http://grafana.org/)
+        - [Grafana](http://grafana.org/): InfluxDB metrics on dashboard
 
 - Container registry
     - [Distribution](https://github.com/docker/distribution): Docker toolset to pack, ship, store, and deliver content
@@ -57,3 +57,4 @@ stack:
 - Authorization and authentication
 - Secret files distribution
 - Finer cloud providers deployment support (GCE, AWS, ...)
+- Generate Ansible inventory file
