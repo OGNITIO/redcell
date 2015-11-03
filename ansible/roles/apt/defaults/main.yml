@@ -3,4 +3,4 @@
 #
 
 # Necessary packages
-apt_packages: ["apt-transport-https", "wget", "curl", "unzip", "syslog-ng"]
+apt_packages: ["apt-transport-https", "wget", "curl", "unzip", "syslog-ng", "git", "python-apt"]
