@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
-#
-# Checking if the packages are well installed
-#
+# Checking if all the packages are well installed
 
 ARRAY=
 COUNTER=0

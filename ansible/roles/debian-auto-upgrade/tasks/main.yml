@@ -1,6 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# List of tasks to install and configure apt auto-upgrade
+# Install and configure apt auto-upgrade
 #
 
 - name: Install unattended-upgrades and apt-listchanges

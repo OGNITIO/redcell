@@ -1,6 +1,5 @@
-# Author: Lucien Zagabe <rz@ognitio.com>
 #
-# Weave scope container visibility
+# Install and run Weave-scope
 #
 
 - name: Download weave scope script

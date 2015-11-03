@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Default file where all the variables for
-# the marathon role are defined.
+# Marathon role variables
 #
 
 # Definition of the JAVA_HOME path

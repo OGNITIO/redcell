@@ -1,8 +1,6 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Handlers file for the mesos installation
-# and configuration. All the tasks for Start/Restart/Stop
-# the mesos master and slave are listed below.
+# Handlers file for the Mesos installation
+# and configuration.
 #
 
 ## Mesos master handlers

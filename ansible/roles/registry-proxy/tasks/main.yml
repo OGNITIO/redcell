@@ -1,21 +1,15 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# List of tasks executed for the configuration and deployment
-# of the registry-proxy on all hosts
+# Configure and deploy registry-proxy
 #
 
-# Create registry-proxy workdir
 - name: Create registry-proxy tmp folder
   file: path=/tmp/registry-proxy state=directory mode=0755
 
-# Copy the Dockerfile
 - name: Copy Dockerfile
   copy: src=Dockerfile dest=/tmp/registry-proxy
 
-# Build docker image
 - name: Building registry-proxy docker image
   command: docker build -t registry-proxy /tmp/registry-proxy
 
-# Run docker container
 - name: Run docker container
   command: docker run --net=host --restart=always -d -e "FORWARD_PORT={{forward_port}}" -e "REGISTRY_HOST={{registry_hostname}}" -e "REGISTRY_PORT={{registry_port}}" registry-proxy

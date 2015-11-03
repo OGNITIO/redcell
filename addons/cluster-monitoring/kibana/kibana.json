@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "mesos-master-1.ognitio.net:5000/containers/kibana",
+            "image": "localhost:5000/containers/kibana",
             "privileged": true,
             "network": "BRIDGE",
             "parameters": [

@@ -4,7 +4,7 @@ IMAGE = telegraf
 TAG = latest
 
 build:
-	docker build -t mesos-master-1.ognitio.net:5000/containers/$(IMAGE):$(TAG) .
+	docker build -t hub.ognitio.net:5000/containers/$(IMAGE):$(TAG) .
 
 push:
-	docker push mesos-master-1.ognitio.net:5000/containers/$(IMAGE):$(TAG)
+	docker push hub.ognitio.net:5000/containers/$(IMAGE):$(TAG)

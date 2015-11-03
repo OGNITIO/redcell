@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "mesos-master-1.ognitio.net:5000/containers/influxdb",
+            "image": "localhost:5000/containers/influxdb",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [

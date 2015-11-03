@@ -24,7 +24,7 @@ RUN cd /go/src/github.com/influxdb/telegraf && make && cp telegraf /usr/bin/
 
 # Configuration of Telegraf
 ADD ./conf/telegraf.conf /tmp/telegraf/telegraf.conf
-ADD ./include/run.sh /tmp/telegraf/run.sh
+ADD ./run.sh /tmp/telegraf/run.sh
 
 # Main command
 CMD ["bash", "/tmp/telegraf/run.sh", "-config", "/tmp/telegraf/telegraf.conf"]

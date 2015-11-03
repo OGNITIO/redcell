@@ -1,10 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
-#
-# Vars file for the data structure definition.
 # Listing of users
-#
 
-# Define the users
 users:
   - username: eddy.zagabe
     name: Eddy Zagabe

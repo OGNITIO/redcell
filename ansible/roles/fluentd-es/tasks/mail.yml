@@ -1,6 +1,5 @@
-# Author: Lucien Zagabe <rz@ognitio.com>
 #
-# Fluentd tasks for deployment.
+# Install and run fluentd.
 #
 
 - name: Create fluentd conf folder

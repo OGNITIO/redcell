@@ -1,5 +1,3 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
-
 - name: Rebooting all hosts
   hosts: all
   sudo: yes

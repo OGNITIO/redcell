@@ -1,25 +1,23 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Default file where all the variables for
-# debian-auto-upgrades are defined.
+# Debian auto-upgrades role variables
 #
 
-# Definition of the time interval in days for 'apt-get update' (0=disable)
+# Time interval in days for 'apt-get update' (0=disable)
 periodic_update_package: 1
 
-# Definition of the time interval in days for 'apt-get upgrade --download-only' (0=disable)
+# Time interval in days for 'apt-get upgrade --download-only' (0=disable)
 periodic_upgrade_package: 1
 
-# Definition of the time interval in days for security upgrade script (0=disable)
+# Time interval in days for security upgrade script (0=disable)
 periodic_security_upgrade_package: 1
 
-# Definition of the time interval in days for 'apt-get autoclean' (0=disable)
+# Time interval in days for 'apt-get autoclean' (0=disable)
 periodic_autoclean: 7
 
-# Definition of the email address to report
+# Email address to report
 periodic_email_report: "root"
 
-# Definition of the mail report
+# Mail verbosity
 # 0: no report
 # 1: progress report (actually any string)
 # 2: + command ouputs

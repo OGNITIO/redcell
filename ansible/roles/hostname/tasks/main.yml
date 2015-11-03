@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Tasks file for hostname :
-# Listing of tasks for update the hostname.
+# Update the hostname.
 #
 
 - name: Update the hostname

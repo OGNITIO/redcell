@@ -1,8 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Handlers file for marathon service
-# All the tasks for Start/Restart/Stop the service
-# are defined below
+# Handlers file for Marathon
 #
 
 # Task for start marathon

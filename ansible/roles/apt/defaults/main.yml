@@ -1,8 +1,6 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Default file where all the variables for apt role
-# are defined.
+# Apt role variables
 #
 
-# Definition of the necessary packages
+# Necessary packages
 apt_packages: ["apt-transport-https", "wget", "curl", "unzip", "syslog-ng"]

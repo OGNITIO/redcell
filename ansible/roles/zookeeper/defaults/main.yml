@@ -1,18 +1,15 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Default file where all the variables
-# needed for the Zookeeper configuration are defined.
+# Zookeeper role variables
 #
 
-# Definition of the ticktime which is used to do heartbeats
-# and the minimum timeout session (twice the ticktime)
+# Ticktime used for heartbeats
 zookeeper_tick_time: 2000
 
 # Definition of the data dir which is the data directory of
 # Zookeeper. (Snapshots, transaction log)
 zookeeper_data_dir: /var/lib/zookeeper
 
-# Definition of the zookeeper client port
+# Zookeeper client port
 zookeeper_client_port: 2181
 
 # Definition of the timeouts that Zookeeper uses to limit the

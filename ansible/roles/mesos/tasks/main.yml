@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# List of tasks for the installation of
-# Apache Mesos orchestrer.
+# Install and configure Apache Mesos.
 #
 
 - name: Add apt_key for repos.mesosphere.io repo

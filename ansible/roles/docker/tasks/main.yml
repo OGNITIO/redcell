@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# List of tasks to configure and install
-# Docker on the remote hosts.
+# Install and configure Docker
 #
 
 - name: Add apt_key for gpg

@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# Default file where all the variables
-# for the mesos automation role are defined. 
+# Mesos automation role variables.
 #
 
 # Setting up the mesos version.

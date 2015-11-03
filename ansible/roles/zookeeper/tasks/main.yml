@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com
 #
-# List of tasks for the installation of Apache
-# Zookeeper.
+# Configure and install Apache Zookeeper
 #
 
 - name: Installation of Apache Zookeeper

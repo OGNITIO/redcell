@@ -1,1 +1,0 @@
-# Role of registry-proxy configuration and deployment

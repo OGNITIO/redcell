@@ -1,7 +1,5 @@
-# Author : zagabe.ed@gmail.com (Eddy ZAGABE)
 #
-# List of tasks for telegraf role configuration
-# and deployment.
+# Configure and deploy telegraf.
 #
 
 - name: Create telegraf conf folder
