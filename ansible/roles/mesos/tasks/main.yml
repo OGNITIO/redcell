@@ -56,6 +56,14 @@
   service: name=mesos-master state=started
   when: "'mesos-master' in group_names"
 
+- name: Copy checking script
+  template: src=master_check.sh.j2 dest=/tmp/master_check.sh mode=0744
+  when: "'mesos-master' in group_names"
+
+- name: Launch checking script
+  command: "/tmp/master_check.sh {{ansible_eth0.ipv4.address}}"
+  when: "'mesos-master' in group_names"
+  ignore_errors: no
 
 ## MESOS-SLAVE GROUP ONLY
 - name: Copy the mesos-slave configuration
