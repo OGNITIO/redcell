@@ -1,9 +1,9 @@
 # 'all' the remote hosts
 [all]
-192.168.0.32 var_hostname=orza-node1 ansible_ssh_user=rootie
-192.168.0.33 var_hostname=orza-node2 ansible_ssh_user=rootie
-192.168.0.34 var_hostname=orza-node3 ansible_ssh_user=rootie
-192.168.0.35 var_hostname=orza-node4 ansible_ssh_user=rootie
+192.168.0.32 var_hostname=mesos-node1 ansible_ssh_user=rootie
+192.168.0.33 var_hostname=mesos-node2 ansible_ssh_user=rootie
+192.168.0.34 var_hostname=mesos-node3 ansible_ssh_user=rootie
+192.168.0.35 var_hostname=mesos-node4 ansible_ssh_user=rootie
 
 # Hosts in 'zookeeper' group
 [zookeeper]
