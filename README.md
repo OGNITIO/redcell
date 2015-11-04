@@ -5,6 +5,8 @@ automate the deployment process of our clusters. As we run Apache Mesos
 and a few of his frameworks for scheduling, we plan to continuously
 share publicly related templates and scripts through this directory.
 
+![RedCell Architecture](http://i.imgur.com/rVyyk43.jpg)
+
 ### Status
 
 This project is undergoing heavy refactoring, hardening and testing
