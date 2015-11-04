@@ -1,16 +1,16 @@
 # Listing of users
 
 users:
-  - username: eddy.zagabe
-    name: Eddy Zagabe
+  - username: stepan
+    name: Stepan Desmond
     groups: "['{{users_primary_group}}', 'sudo']"
     uid: 1001
     ssh_keys:
-      - eddy-zagabe.key
+      - stepan-desmond.key
 
-  - username: lucien.zagabe
-    name: Lucien Zagabe
+  - username: cai
+    name: Cai Ilari
     groups: "['{{users_primary_group}}', 'sudo']"
     uid: 1002
     ssh_keys:
-      - lucien-zagabe.key
+      - cai-ilari.key
