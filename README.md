@@ -1,4 +1,4 @@
-# RedCell: Cluster Configuration & Deployment
+## RedCell: Cluster Configuration & Deployment
 
 This repository contains scripts and configurations used at Ognitio to
 automate the deployment process of our clusters. As we run Apache Mesos
