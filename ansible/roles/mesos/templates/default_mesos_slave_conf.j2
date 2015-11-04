@@ -1,10 +1,13 @@
 ## Default mesos-slave configuration
 
 # Definition of the slave port
-export MESOS_PORT={{mesos_slave_port}}
+export MESOS_PORT={{mesos_slaves_port}}
 
 # Definition of the quorum of masters
 export MESOS_MASTER=zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
 
-# Definition of the CPUs ressources
-export MESOS_RESSOURCES="cpus:{{mesos_slave_cpus}};mem:{{mesos_slave_mem}}"
+# Definition of the resources
+export MESOS_RESOURCES="cpus:{{mesos_slaves_cpus}};mem:{{mesos_slaves_mem}};disk:{{mesos_slaves_disk}};ports:[{{mesos_slaves_min_port}}-{{mesos_slaves_max_port}}]"
+
+# Definition of the attributes
+export MESOS_ATTRIBUTES="hostname:{{var_hostname}};os:{{mesos_slaves_os}};cloud:{{mesos_slave_service_provider}};machine_type:{{machine_type}};disk_type:{{disk_type}}"
