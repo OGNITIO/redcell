@@ -18,7 +18,7 @@ mesos_ip_address: "{{ansible_eth0.ipv4.address}}"
 mesos_master_quorum: 2
 
 # Definition of the master port
-mesos_master_port: 5050
+mesos_masters_port: 5050
 
 
 ## Mesos slave configuration

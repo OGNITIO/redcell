@@ -57,11 +57,11 @@
   when: "'mesos-master' in group_names"
 
 - name: Copy master checking script
-  template: src=master_check.sh.j2 dest=/tmp/master_check.sh mode=0744
+  template: src=mesos_check.sh.j2 dest=/tmp/mesos_check.sh mode=0744
   when: "'mesos-master' in group_names"
 
 - name: Launch master checking script
-  command: "/tmp/master_check.sh {{ansible_eth0.ipv4.address}}"
+  command: "/tmp/mesos_check.sh master {{ansible_eth0.ipv4.address}}"
   when: "'mesos-master' in group_names"
   ignore_errors: no
 
@@ -92,10 +92,10 @@
   when: "'mesos-slave' in group_names"
 
 - name: Copy slave checking script
-  template: src=slave_check.sh.j2 dest=/tmp/slave_check.sh mode=0744
+  template: src=mesos_check.sh.j2 dest=/tmp/mesos_check.sh mode=0744
   when: "'mesos-slave' in group_names"
 
 - name: Launch slave checking script
-  command: "/tmp/slave_check.sh {{ansible_eth0.ipv4.address}}"
+  command: "/tmp/mesos_check.sh slave {{ansible_eth0.ipv4.address}}"
   when: "'mesos-slave' in group_names"
   ignore_errors: no

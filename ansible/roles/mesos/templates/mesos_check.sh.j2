@@ -1,0 +1,63 @@
+#!/bin/bash
+
+declare -A JSON_KEYS_VALUES_MASTER=(["\"port\":"]="{{mesos_masters_port}}"
+                                     ["\"quorum\":"]="{{mesos_master_quorum}}"
+                                     ["\"work_dir\":"]="{{mesos_work_dir}}"
+                                     ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos")
+
+declare -A JSON_KEYS_VALUES_SLAVE=(["\"port\":"]="{{mesos_slaves_port}}"
+                             ["\"cpus\""]="{{mesos_slaves_cpus}}"
+                             ["\"mem\":"]="{{mesos_slaves_mem}}"
+                             ["\"disk\":"]="{{mesos_slaves_disk}}"
+                             ["\"ports\":"]="{{mesos_slaves_min_port}}-{{mesos_slaves_max_port}}"
+                             ["\"os\":"]="{{mesos_slaves_os}}"
+                             ["\"instance_type\":"]="{{instance_type}}"
+                             ["\"disk_type\":"]="{{disk_type}}"
+                             ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos")
+
+RESPONSE=
+MASTER_PORT={{mesos_masters_port}}
+SLAVE_PORT={{mesos_slaves_port}}
+
+function exit_error {
+    echo "./mesos_check.sh: Error: "$1""
+    exit 2
+}
+
+function check_error {
+    if [ $? != 0 ]; then
+        exit_error "$1"
+    fi
+}
+
+function grep_value {
+    echo $RESPONSE | python -m json.tool | grep -w "$1" | grep -w "$2" > /dev/null
+}
+
+function check_metadata {
+    eval "declare -A KEYS_VALUES="${3#*=}
+    for keys in ${!KEYS_VALUES[@]}
+    do
+        grep_value $keys ${KEYS_VALUES["$keys"]}
+        check_error "Mesos "$1" $keys misconfigured or missing. ("$2")"
+    done
+}
+
+if [ "$1" = "master" ] || [ "$1" = "slave" ] && [ "$2" != "" ]; then
+    if [ $1 = "master" ]; then
+        RESPONSE=`curl -s -X GET http://$2:$MASTER_PORT/master/state.json`
+        check_error "Mesos master not responding... ($2)"
+        check_metadata $1 $2 "$(declare -p JSON_KEYS_VALUES_MASTER)"
+    else
+        RESPONSE=`curl -s -X GET http://$2:$SLAVE_PORT/state`
+        check_error "Mesos slave not responding... ($2)"
+        check_metadata $1 $2 "$(declare -p JSON_KEYS_VALUES_SLAVE)"
+    fi
+else
+    echo "./mesos_check.sh: Error: Wrong arguments."
+    echo "Usage: ./mesos_check.sh master|slave IP_ADDRESS"
+    echo "Example: ./mesos_check.sh master 192.168.1.1"
+    exit 2
+fi
+
+exit 0
