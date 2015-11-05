@@ -56,11 +56,11 @@
   service: name=mesos-master state=started
   when: "'mesos-master' in group_names"
 
-- name: Copy checking script
+- name: Copy master checking script
   template: src=master_check.sh.j2 dest=/tmp/master_check.sh mode=0744
   when: "'mesos-master' in group_names"
 
-- name: Launch checking script
+- name: Launch master checking script
   command: "/tmp/master_check.sh {{ansible_eth0.ipv4.address}}"
   when: "'mesos-master' in group_names"
   ignore_errors: no
@@ -90,3 +90,12 @@
 - name: Start the mesos-slave service
   service: name=mesos-slave state=started
   when: "'mesos-slave' in group_names"
+
+- name: Copy slave checking script
+  template: src=slave_check.sh.j2 dest=/tmp/slave_check.sh mode=0744
+  when: "'mesos-slave' in group_names"
+
+- name: Launch slave checking script
+  command: "/tmp/slave_check.sh {{ansible_eth0.ipv4.address}}"
+  when: "'mesos-slave' in group_names"
+  ignore_errors: no

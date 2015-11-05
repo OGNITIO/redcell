@@ -26,7 +26,7 @@ mesos_master_port: 5050
 mesos_slaves_port: 5051
 
 # Definition of the CPUs resources
-mesos_slaves_cpus: 4
+mesos_slaves_cpus: 4.0
 
 # Definition of the RAM resources (MB)
 mesos_slaves_mem: 3200

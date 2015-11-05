@@ -7,7 +7,7 @@ WORKDIR="{{mesos_work_dir}}"
 RESPONSE=
 
 function exit_error {
-    echo $1
+    echo "./master_check.sh: Error: $1"
     exit 2
 }
 
@@ -16,7 +16,7 @@ if [[ $1 != "" ]]; then
     # Checking availability
     RESPONSE=`curl -s -X GET http://$1:$PORT/master/state.json`
     if [ $? != 0 ]; then
-        exit_error "The $1 Mesos master not responding..."
+        exit_error "Mesos master not responding... ($1)"
     fi
 
     # Checking Zookeepers
@@ -42,7 +42,8 @@ if [[ $1 != "" ]]; then
     fi
     
 else
-    echo "IP Address missing."
+    echo "./master_check.sh: Error: IP Address missing."
+    echo "Usage : ./master_check.sh IP_ADDRRESS"
     exit 2
 fi
 
