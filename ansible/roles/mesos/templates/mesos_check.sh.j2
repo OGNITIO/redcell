@@ -21,7 +21,7 @@ SLAVE_PORT={{mesos_slaves_port}}
 
 function exit_error {
     echo "./mesos_check.sh: Error: "$1""
-    exit 2
+    exit 1
 }
 
 function check_error {
@@ -57,7 +57,7 @@ else
     echo "./mesos_check.sh: Error: Wrong arguments."
     echo "Usage: ./mesos_check.sh master|slave IP_ADDRESS"
     echo "Example: ./mesos_check.sh master 192.168.1.1"
-    exit 2
+    exit 1
 fi
 
 exit 0

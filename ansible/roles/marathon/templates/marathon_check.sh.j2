@@ -1,0 +1,49 @@
+#!/bin/bash
+
+declare -A JSON_KEYS_VALUES=(["\"http_port\":"]="{{marathon_http_port}}"
+                             ["\"ha\":"]="{{marathon_high_availability_mode}}"
+                             ["\"master\":"]="zk://{% for host in groups['mesos-master'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos"
+                             ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon")
+
+
+PORT="{{marathon_http_port}}"
+RESPONSE=
+
+function exit_error {
+    echo "$1"
+    exit 1
+}
+
+function check_error {
+    if [ $? != 0 ]; then
+        exit_error "$1"
+    fi
+}
+
+function grep_value {
+    echo $RESPONSE | python -m json.tool | grep -w "$1" | grep -w "$2" > /dev/null
+}
+
+if [ $1 != "" ]; then
+    # Checking availability
+    RESPONSE=`curl -s -L -X GET $1:$PORT/v2/info`
+    check_error "Marathon not responding... ($1)"
+
+    if [ -z $RESPONSE ]; then
+        exit 0
+    fi
+    
+    # Checking metadata
+    for keys in ${!JSON_KEYS_VALUES[@]}
+    do
+        grep_value $keys ${JSON_KEYS_VALUES["$keys"]}
+        check_error "Marathon $keys misconfigured or missing. ($1)"
+    done
+
+else
+    echo "./marathon_check.sh: Error: Wrong arguments"
+    echo "Usage: ./marathon_check.sh IP_ADDRESS"
+    exit 1
+fi
+
+exit 0

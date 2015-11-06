@@ -28,6 +28,7 @@
     - "/etc/mesos-master/quorum"
     - "/etc/mesos-master/work_dir"
     - "/etc/mesos-slave/master"
+    - "/tmp/mesos_check.sh"
 
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos

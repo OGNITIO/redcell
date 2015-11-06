@@ -11,6 +11,13 @@
     - openjdk-8-jre-headless
     - marathon
 
+- name: Remove default configuration file
+  file: path={{item}} state=absent
+  with_items:
+    - "/etc/default/marathon"
+    - "/etc/syslog-ng/conf.d/marathon.conf"
+    - "/tmp/marathon_check.sh"
+    
 - name: Copy default marathon configuration file
   template: src=default_marathon_conf.j2 dest=/etc/default/marathon
 
@@ -19,3 +26,10 @@
 
 - name: Start marathon
   service: name=marathon state=started
+
+- name: Copy marathon checking script
+  template: src=marathon_check.sh.j2 dest=/tmp/marathon_check.sh mode=0744
+
+- name: Launch marathon checking script
+  command: "/tmp/marathon_check.sh {{ansible_eth0.ipv4.address}}"
+  ignore_errors: no
