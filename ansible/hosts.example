@@ -1,35 +1,29 @@
 # 'all' the remote hosts
 [all]
-192.168.0.32 var_hostname=mesos-node1 ansible_ssh_user=rootie
-192.168.0.33 var_hostname=mesos-node2 ansible_ssh_user=rootie
-192.168.0.34 var_hostname=mesos-node3 ansible_ssh_user=rootie
-192.168.0.35 var_hostname=mesos-node4 ansible_ssh_user=rootie
+192.168.0.32 var_hostname=mesos-node1 ansible_ssh_user=rootie mesos_mode=master-slave cluster_name=cluster1 mesos_attributes="os:debian-jessie;cloud:kimsufi;instance-type:ks-2;disk-type:ls-ssd;level:10"
+192.168.0.33 var_hostname=mesos-node2 ansible_ssh_user=rootie mesos_mode=master-slave cluster_name=cluster1 mesos_attributes="os:debian-jessie;cloud:kimsufi;instance-type:ks-2;disk-type:ls-ssd;level:10"
+192.168.0.34 var_hostname=mesos-node3 ansible_ssh_user=rootie mesos_mode=master-slave cluster_name=cluster1 mesos_attributes="os:debian-jessie;cloud:kimsufi;instance-type:ks-2;disk-type:ls-ssd;level:10"
+192.168.0.35 var_hostname=mesos-node4 ansible_ssh_user=rootie mesos_mode=master-slave cluster_name=cluster1 mesos_attributes="os:debian-jessie;cloud:kimsufi;instance-type:ks-2;disk-type:ls-ssd;level:10"
 
-# Hosts in 'zookeeper' group
+# Hosts for 'zookeeper' group
 [zookeeper]
 192.168.0.32 zoo_id=1
 192.168.0.33 zoo_id=2
 192.168.0.34 zoo_id=3
 
-# Hosts 'mesos-master' group
-[mesos-master]
-192.168.0.32 ansible_ssh_user=rootie
-192.168.0.33 ansible_ssh_user=rootie
-192.168.0.34 ansible_ssh_user=rootie
+# Hosts for 'mesos' group
+[mesos]
+192.168.0.32
+192.168.0.33
+192.168.0.34
+192.168.0.35
 
-# Hosts 'mesos-slave' group
-[mesos-slave]
-192.168.0.32 ansible_ssh_user=rootie
-192.168.0.33 ansible_ssh_user=rootie
-192.168.0.34 ansible_ssh_user=rootie
-192.168.0.35 ansible_ssh_user=rootie
-
-# Hosts 'marathon' group
+# Hosts for 'marathon' group
 [marathon]
-192.168.0.32 ansible_ssh_user=rootie
-192.168.0.33 ansible_ssh_user=rootie
-192.168.0.34 ansible_ssh_user=rootie
+192.168.0.32
+192.168.0.33
+192.168.0.34
 
-# Hosts 'mesos-dns' group
+# Hosts for 'mesos-dns' group
 [mesos-dns]
 192.168.0.32
