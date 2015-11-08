@@ -2,6 +2,7 @@
 
 REDCELL_ROOT=$(pwd)/..
 source $REDCELL_ROOT/gce/config-env.sh
+source $REDCELL_ROOT/gce/inventory-file-util.sh
 
 for node in $(seq 1 $NUM_MESOS_MASTER); do MESOS_MASTER_TAGS[$node]="${MESOS_MASTER_TAG}-$node"; done
 
@@ -19,7 +20,8 @@ function wait-for-jobs {
 function mesos-up {
     if ! gcloud compute networks --project "${PROJECT}" describe "${NETWORK}" &>/dev/null; then
         echo "Creating new network: ${NETWORK}"
-        gcloud compute networks create --project "${PROJECT}" "${NETWORK}" --range "${CLUSTER_IP_RANGE}"
+        gcloud compute networks create --project "${PROJECT}" "${NETWORK}" \
+               --range "${CLUSTER_IP_RANGE}"
     fi
 
     if ! gcloud compute firewall-rules --project "${PROJECT}" describe "${NETWORK}-default-internal" &>/dev/null; then
@@ -123,6 +125,9 @@ function mesos-up {
            "${MESOS_AGENT_TAG}-group" \
            --zone "${ZONE}" \
            --project "${PROJECT}" || true;
+
+    # Generate Ansible inventory file
+    generate-inventory-file $REDCELL_ROOT/ansible/hosts
 }
 
 # run mesos cluster
