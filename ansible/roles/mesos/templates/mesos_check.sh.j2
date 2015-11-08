@@ -10,10 +10,8 @@ declare -A JSON_KEYS_VALUES_SLAVE=(["\"port\":"]="{{mesos_slaves_port}}"
                              ["\"mem\":"]="{{mesos_slaves_mem}}"
                              ["\"disk\":"]="{{mesos_slaves_disk}}"
                              ["\"ports\":"]="{{mesos_slaves_min_port}}-{{mesos_slaves_max_port}}"
-                             ["\"os\":"]="{{mesos_slaves_os}}"
-                             ["\"instance_type\":"]="{{instance_type}}"
-                             ["\"disk_type\":"]="{{disk_type}}"
                              ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos")
+
 
 RESPONSE=
 MASTER_PORT={{mesos_masters_port}}

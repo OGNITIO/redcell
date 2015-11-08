@@ -28,6 +28,9 @@
 - name: Restart zookeeper
   service: name=zookeeper state=restarted
 
+- name: Awaits the launch of Zookeeper
+  pause: seconds=10
+  
 - name: Checking zookeeper up and running
   command: /usr/share/zookeeper/bin/zkServer.sh status
   ignore_errors: no

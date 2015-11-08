@@ -24,14 +24,8 @@
   roles:
     - zookeeper
     
-- name: Apache Mesos masters
-  hosts: mesos-master
-  sudo: yes
-  roles:
-    - mesos
-
-- name: Apache Mesos slaves
-  hosts: mesos-slave
+- name: Apache Mesos installation
+  hosts: mesos
   sudo: yes
   roles:
     - mesos
