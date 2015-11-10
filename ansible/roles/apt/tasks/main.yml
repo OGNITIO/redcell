@@ -7,11 +7,10 @@
   with_items: apt_packages
 
 - name: Copy checking script
-  copy: src=check_apt.sh dest=/tmp/
-
-- name: Set execution right for the script
-  file: path=/tmp/check_apt.sh mode=0744
+  copy: src=check_apt.sh dest=/tmp/ mode=0744
+  when: "testing is defined and testing == true"
 
 - name: Checking the packages installed
   command: "/tmp/check_apt.sh {% for pkgs in apt_packages %}{{pkgs}} {% endfor %}"
   ignore_errors: no
+  when: "testing is defined and testing == true"

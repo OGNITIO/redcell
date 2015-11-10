@@ -35,6 +35,7 @@
 
 - name: Copy checking script
   template: src=mesos_check.sh.j2 dest=/tmp/mesos_check.sh mode=0744
+  when: "testing is defined and testing == true"
   
 # Mesos master tasks
 - name: Copy mesos-master configuration
@@ -89,12 +90,14 @@
 
 
 # Launch checking script
-# - name: Launch slave checking script
-#   command: "/tmp/mesos_check.sh slave {{ansible_eth0.ipv4.address}}"
-#   when: mesos_mode == "slave" or mesos_mode == "master-slave"
-#   ignore_errors: no
+- name: Launch slave checking script
+  command: "/tmp/mesos_check.sh slave {{ansible_eth0.ipv4.address}}"
+  when: mesos_mode == slave or mesos_mode == master-slave
+  when: testing is defined and testing == true
+  ignore_errors: no
 
-# - name: Launch master checking script
-#   command: "/tmp/mesos_check.sh master {{ansible_eth0.ipv4.address}}"
-#   when: mesos_mode == "master" or mesos_mode == "master-slave"
-#   ignore_errors: no
+- name: Launch master checking script
+  command: "/tmp/mesos_check.sh master {{ansible_eth0.ipv4.address}}"
+  when: mesos_mode == master or mesos_mode == master-slave
+  when: testing is defined and testing == true
+  ignore_errors: no

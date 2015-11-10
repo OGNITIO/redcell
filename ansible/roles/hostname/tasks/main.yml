@@ -22,7 +22,6 @@
 
 - name: Restart remote hosts
   command: shutdown -r +1 "Ansible updates triggered"
-  ignore_errors: yes
     
 - name: Reloading network configuration (waiting 1m20s)
   pause: seconds=80

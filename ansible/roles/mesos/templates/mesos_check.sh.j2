@@ -3,10 +3,10 @@
 declare -A JSON_KEYS_VALUES_MASTER=( ["\"port\":"]="{{mesos_masters_port}}" 
                                      ["\"quorum\":"]="{{mesos_master_quorum}}" 
                                      ["\"work_dir\":"]="{{mesos_work_dir}}" 
-                                     ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
+                                     ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
 
 declare -A JSON_KEYS_VALUES_SLAVE=( ["\"port\":"]="{{mesos_slaves_port}}"
-                                    ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
+                                    ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
 
 
 RESPONSE=
