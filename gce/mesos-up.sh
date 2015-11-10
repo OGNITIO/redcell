@@ -6,7 +6,7 @@ source $REDCELL_ROOT/gce/inventory-file-util.sh
 
 ADMIN_PRIVATE_KEY="${HOME}/.ssh/${PROJECT}"
 
-for node in $(seq 1 $NUM_MESOS_MASTER); do MESOS_MASTER_TAGS[$node]="${MESOS_MASTER_TAG}-$node"; done
+GCLOUD_CMD="gcloud compute"
 
 function wait-for-jobs {
     local fail=0
@@ -15,57 +15,60 @@ function wait-for-jobs {
         wait "${job}" || fail=$((fail + 1))
     done
     if (( fail != 0 )); then
-        echo -e "${color_red}${fail} commands failed.  Exiting.${color_norm}" >&2
+        echo -e "\033[0;31m${fail} commands failed.  Exiting.\033[0m" >&2
     fi
 }
 
 function mesos-up {
-    if ! gcloud compute networks --project "${PROJECT}" describe "${NETWORK}" &>/dev/null; then
-        echo "Creating new network: ${NETWORK}"
-        gcloud compute networks create --project "${PROJECT}" "${NETWORK}" \
+    if ! $GCLOUD_CMD networks --project "${PROJECT}" describe "${NETWORK}" &>/dev/null; then
+        echo -e "\033[0;32mCreating new network: ${NETWORK}\033[0m"
+        $GCLOUD_CMD networks create --project "${PROJECT}" "${NETWORK}" \
                --range "${CLUSTER_IP_RANGE}"
     fi
 
-    if ! gcloud compute firewall-rules --project "${PROJECT}" describe "${NETWORK}-default-internal" &>/dev/null; then
-        gcloud compute firewall-rules create "${NETWORK}-default-internal" \
+    if ! $GCLOUD_CMD firewall-rules --project "${PROJECT}" describe "${NETWORK}-default-internal" &>/dev/null; then
+        $GCLOUD_CMD firewall-rules create "${NETWORK}-default-internal" \
                --project "${PROJECT}" \
                --network "${NETWORK}" \
                --source-ranges "10.0.0.0/8" \
                --allow "tcp:1-65535,udp:1-65535,icmp" &
     fi
 
-    if ! gcloud compute firewall-rules describe --project "${PROJECT}" "${NETWORK}-default-ssh" &>/dev/null; then
-        gcloud compute firewall-rules create "${NETWORK}-default-ssh" \
+    if ! $GCLOUD_CMD firewall-rules describe --project "${PROJECT}" "${NETWORK}-default-ssh" &>/dev/null; then
+        $GCLOUD_CMD firewall-rules create "${NETWORK}-default-ssh" \
                --project "${PROJECT}" \
                --network "${NETWORK}" \
                --source-ranges "0.0.0.0/0" \
                --allow "tcp:22" &
     fi
 
-    echo "Starting master and configuring firewalls."
+    echo -e "\033[0;32mStarting master and configuring firewalls.\033[0m"
+
+    local -a mesos_master_tags
+    for i in $(seq 1 $NUM_MESOS_MASTER); do mesos_master_tags[$i]="${MESOS_MASTER_TAG}-$i"; done
 
     # TODO(rzagabe): The following firewall rule might need to be reviewed.
-    gcloud compute firewall-rules create "${MESOS_MASTER_TAG}-https" \
+    $GCLOUD_CMD firewall-rules create "${MESOS_MASTER_TAG}-https" \
            --project "${PROJECT}" \
            --network "${NETWORK}" \
-           --target-tags "$(IFS=$','; echo "${MESOS_MASTER_TAGS[*]}")" \
+           --target-tags "$(IFS=$','; echo "${mesos_master_tags[*]}")" \
            --allow tcp:443 &
 
-    echo "Creating mesos masters."
+    echo -e "\033[0;32mCreating mesos masters.\033[0m"
 
-    for node in $(seq 1 $NUM_MESOS_MASTER); do
-        gcloud compute disks create "${MESOS_MASTER_TAGS[$node]}-pd" \
+    for i in $(seq 1 $NUM_MESOS_MASTER); do
+        $GCLOUD_CMD disks create "${mesos_master_tags[$i]}-pd" \
                --project "${PROJECT}" \
                --zone "${ZONE}" \
                --type "${MESOS_MASTER_DISK_TYPE}" \
                --size "${MESOS_MASTER_DISK_SIZE}"
 
 
-        # gcloud compute addresses create "${MESOS_MASTER_TAGS[$node]}-ip" \
+        # $GCLOUD_CMD addresses create "${mesos_master_tags[$i]}-ip" \
         #        --project "${PROJECT}" \
         #        --region "${REGION}" -q
 
-        # MASTER_RESERVED_IP=$(gcloud compute addresses describe "${MESOS_MASTER_TAGS[$node]}-ip" \
+        # MASTER_RESERVED_IP=$($GCLOUD_CMD addresses describe "${mesos_master_tags[$i]}-ip" \
         #                             --project "${PROJECT}" \
         #                             --region "${REGION}" -q --format yaml | awk '/^address:/ { print $2 }')
 
@@ -75,20 +78,20 @@ function mesos-up {
         fi
 
         # --address "${MASTER_RESERVED_IP}" \
-        gcloud compute instances create "${MESOS_MASTER_TAGS[$node]}" \
+        $GCLOUD_CMD instances create "${mesos_master_tags[$i]}" \
                --project "${PROJECT}" \
                --zone "${ZONE}" \
                --machine-type "${MESOS_MASTER_TYPE}" \
                --image "${MESOS_MASTER_IMAGE}" \
-               --tags "${MESOS_MASTER_TAGS[$node]}" \
+               --tags "${mesos_master_tags[$i]}" \
                --network "${NETWORK}" \
                --can-ip-forward \
                --metadata-from-file startup-script=configure-instance.sh \
                --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
-               --disk "name=${MESOS_MASTER_TAGS[$node]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
+               --disk "name=${mesos_master_tags[$i]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
-    gcloud compute firewall-rules create "${MESOS_AGENT_TAG}-all" \
+    $GCLOUD_CMD firewall-rules create "${MESOS_AGENT_TAG}-all" \
            --project "${PROJECT}" \
            --network "${NETWORK}" \
            --source-ranges "${CLUSTER_IP_RANGE}" \
@@ -97,7 +100,7 @@ function mesos-up {
 
     wait-for-jobs
 
-    echo "Creating mesos agents."
+    echo -e "\033[0;32mCreating mesos agents.\033[0m"
 
     local template_name="${MESOS_AGENT_TAG}-template"
 
@@ -106,7 +109,7 @@ function mesos-up {
         preemptible_agent="--preemptible --maintenance-policy TERMINATE"
     fi
     
-    gcloud compute instance-templates create "$template_name" \
+    $GCLOUD_CMD instance-templates create "$template_name" \
            --project "${PROJECT}" \
            --machine-type "${MESOS_AGENT_TYPE}" \
            --boot-disk-type "${MESOS_AGENT_DISK_TYPE}" \
@@ -119,7 +122,7 @@ function mesos-up {
            $preemptible_agent \
            --can-ip-forward >&2
 
-    gcloud compute instance-groups managed \
+    $GCLOUD_CMD instance-groups managed \
            create "${MESOS_AGENT_TAG}-group" \
            --project "${PROJECT}" \
            --zone "${ZONE}" \
@@ -127,16 +130,24 @@ function mesos-up {
            --size "${NUM_CLUSTER_AGENTS}" \
            --template "$template_name" || true;
 
-    gcloud compute instance-groups managed wait-until-stable \
+    $GCLOUD_CMD instance-groups managed wait-until-stable \
            "${MESOS_AGENT_TAG}-group" \
            --zone "${ZONE}" \
            --project "${PROJECT}" || true;
 
     # Generate Ansible inventory file
+    echo -e "\033[0;32mGenerate Ansible inventory file: $PROJECT\033[0m"
     generate-inventory-file $REDCELL_ROOT/ansible/hosts
 
+    sleep 10
+
     cd $REDCELL_ROOT/ansible
-    ansible-playbook -u admin --private-key=$ADMIN_PRIVATE_KEY install.yml
+    ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" install.yml
+
+    local master_external_ips=($($GCLOUD_CMD instances list --zone="${ZONE}" --regexp="${MESOS_MASTER_NAME}.*" --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
+    echo -e "\033[0;32m${PROJECT} cluster is running. The masters are running at:"
+    echo -e "\033[0;33m$(IFS=$','; echo "${master_external_ips[*]}")"
+    echo -e "\033[0;32mThe admin keypair is located in $ADMIN_PRIVATE_KEY\033[0m"
 }
 
 # Generate admin private key
