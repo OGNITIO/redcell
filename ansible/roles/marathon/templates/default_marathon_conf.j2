@@ -7,10 +7,10 @@ export JAVA_HOME={{marathon_java_home_path}}
 export JAVA_OPTS={{marathon_java_opts_var}}
 
 # Definition of the masters
-export MARATHON_MASTER=zk://{% for host in groups['mesos-master'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
+export MARATHON_MASTER=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
 
 # Definition of Marathon's znode in the zookeepers
-export MARATHON_ZK=zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon
+export MARATHON_ZK=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon
 
 # Definition of http_port of Marathon
 export MARATHON_HTTP_PORT={{marathon_http_port}}

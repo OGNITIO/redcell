@@ -8,10 +8,9 @@
     - apt
     - debian-auto-upgrade
     - docker
-    - fluentd
+    - fluentd-es
     - telegraf
     - registry-proxy
-
 
 - name: Mesos-DNS
   hosts: [mesos-dns, all]
