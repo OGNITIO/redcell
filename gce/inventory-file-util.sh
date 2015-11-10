@@ -7,11 +7,7 @@ function add-inventory-masters {
     local file=$1
     local include_hostname=$3
     for i in "${!MASTER_EXTERNAL_IPS[@]}"; do
-        if [[ $include_hostname == "true" ]]; then
-            echo "${MASTER_EXTERNAL_IPS[$i]} var_hostname=${MASTER_HOSTNAMES[$i]} $2" >> $file
-        else
-            echo "${MASTER_EXTERNAL_IPS[$i]} $2" >> $file
-        fi
+        echo -e "${MASTER_EXTERNAL_IPS[$i]}" >> $file
     done
 }
 
@@ -19,11 +15,7 @@ function add-inventory-agents {
     local file=$1
     local include_hostname=$3
     for i in "${!AGENT_EXTERNAL_IPS[@]}"; do
-        if [[ $include_hostname == "true" ]]; then
-            echo "${AGENT_EXTERNAL_IPS[$i]} var_hostname=${AGENT_HOSTNAMES[$i]} $2" >> $file
-        else
-            echo "${AGENT_EXTERNAL_IPS[$i]} $2" >> $file
-        fi
+        echo -e "${AGENT_EXTERNAL_IPS[$i]}" >> $file
     done
 }
 
@@ -37,33 +29,38 @@ function generate-inventory-file {
 
     local inventory_file=$1
 
+    local all_host_vars="cluster_name=$CLOUD"
+
     echo "# Ansible auto-generated inventory file (cloud: $CLOUD; project: $PROJECT)" > $inventory_file
     echo $'\n'"[all]" >> $inventory_file
-    add-inventory-masters $inventory_file "ansible_ssh_user=rootie" true
-    add-inventory-agents $inventory_file "ansible_ssh_user=rootie" true
-
-    echo $'\n'"[zookeeper]" >> $inventory_file
     for i in "${!MASTER_EXTERNAL_IPS[@]}"; do
-        echo "${MASTER_EXTERNAL_IPS[$i]} zoo_id=$i" >> $inventory_file
+        local host_vars="mesos_mode=master mesos_master_quorum=$(((${#MASTER_EXTERNAL_IPS[@]}/2)+1)) cluster_name=${CLOUD}-${REGION}"
+        echo -e "${MASTER_EXTERNAL_IPS[$i]}\t var_hostname=${MASTER_HOSTNAMES[$i]} $host_vars" >> $inventory_file
     done
-
-    echo $'\n'"[mesos-master]" >> $inventory_file
-    add-inventory-masters $inventory_file "ansible_ssh_user=rootie" false
-
-    echo $'\n'"[mesos-slave]" >> $inventory_file
     for i in "${!AGENT_EXTERNAL_IPS[@]}"; do
-        agent_attributes="attributes=os:${OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${ZONE};cloud:${CLOUD};level:0"
+        mesos_attributes="mesos_attributes=os:${OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${ZONE};cloud:${CLOUD};level:0"
         weave_network="weave_network=$(IFS=$'\n'; echo "${AGENT_EXTERNAL_IPS[*]}" | head -1)"
         weave_bridge_cidr="weave_bridge_cidr=10.2.0.$(($i+1))/16"
+
+        local host_vars="$weave_bridge_cidr $mesos_attributes cluster_name=${CLOUD}-${REGION}"
         if [[ $i == 0 ]]; then
-            echo "${AGENT_EXTERNAL_IPS[$i]} ansible_ssh_user=rootie $weave_bridge_cidr $agent_attributes" >> $inventory_file
+            echo -e "${AGENT_EXTERNAL_IPS[$i]}\t var_hostname=${AGENT_HOSTNAMES[$i]} mesos_mode=slave $host_vars" >> $inventory_file
         else
-            echo "${AGENT_EXTERNAL_IPS[$i]} ansible_ssh_user=rootie $weave_network $weave_bridge_cidr $agent_attributes" >> $inventory_file
+            echo -e "${AGENT_EXTERNAL_IPS[$i]}\t var_hostname=${AGENT_HOSTNAMES[$i]} mesos_mode=slave $weave_network $host_vars" >> $inventory_file
         fi
     done
 
+    echo $'\n'"[zookeeper]" >> $inventory_file
+    for i in "${!MASTER_EXTERNAL_IPS[@]}"; do
+        echo -e "${MASTER_EXTERNAL_IPS[$i]}\t zoo_id=$i" >> $inventory_file
+    done
+
+    echo $'\n'"[mesos]" >> $inventory_file
+    add-inventory-masters $inventory_file
+    add-inventory-agents $inventory_file
+
     echo $'\n'"[marathon]" >> $inventory_file
-    add-inventory-masters $inventory_file "ansible_ssh_user=rootie" false
+    add-inventory-masters $inventory_file
 
     echo $'\n'"[mesos-dns]" >> $inventory_file
     echo $(IFS=$'\n'; echo "${MASTER_EXTERNAL_IPS[*]}" | head -1) >> $inventory_file
