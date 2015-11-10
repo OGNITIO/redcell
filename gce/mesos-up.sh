@@ -4,6 +4,8 @@ REDCELL_ROOT=$(pwd)/..
 source $REDCELL_ROOT/gce/config-env.sh
 source $REDCELL_ROOT/gce/inventory-file-util.sh
 
+ADMIN_PRIVATE_KEY="${HOME}/.ssh/${PROJECT}"
+
 for node in $(seq 1 $NUM_MESOS_MASTER); do MESOS_MASTER_TAGS[$node]="${MESOS_MASTER_TAG}-$node"; done
 
 function wait-for-jobs {
@@ -82,7 +84,7 @@ function mesos-up {
                --network "${NETWORK}" \
                --can-ip-forward \
                --metadata-from-file startup-script=configure-instance.sh \
-               --metadata admin_key="$(cat $1)" \
+               --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
                --disk "name=${MESOS_MASTER_TAGS[$node]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
@@ -112,7 +114,7 @@ function mesos-up {
            --image "${MESOS_AGENT_IMAGE}" \
            --tags "${MESOS_AGENT_TAG}" \
            --metadata-from-file startup-script=configure-instance.sh \
-           --metadata admin_key="$(cat $1)" \
+           --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
            --network "${NETWORK}" \
            $preemptible_agent \
            --can-ip-forward >&2
@@ -132,7 +134,13 @@ function mesos-up {
 
     # Generate Ansible inventory file
     generate-inventory-file $REDCELL_ROOT/ansible/hosts
+
+    cd $REDCELL_ROOT/ansible
+    ansible-playbook -u admin --private-key=$ADMIN_PRIVATE_KEY install.yml
 }
 
-# run mesos cluster
-mesos-up $1
+# Generate admin private key
+ssh-keygen -b 2048 -t rsa -f $ADMIN_PRIVATE_KEY -q -N ""
+
+# Run mesos cluster
+mesos-up
