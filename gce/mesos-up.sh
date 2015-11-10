@@ -81,6 +81,8 @@ function mesos-up {
                --tags "${MESOS_MASTER_TAGS[$node]}" \
                --network "${NETWORK}" \
                --can-ip-forward \
+               --metadata-from-file startup-script=configure-instance.sh \
+               --metadata admin_key="$(cat $1)" \
                --disk "name=${MESOS_MASTER_TAGS[$node]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
@@ -109,6 +111,8 @@ function mesos-up {
            --boot-disk-size "${MESOS_AGENT_DISK_SIZE}" \
            --image "${MESOS_AGENT_IMAGE}" \
            --tags "${MESOS_AGENT_TAG}" \
+           --metadata-from-file startup-script=configure-instance.sh \
+           --metadata admin_key="$(cat $1)" \
            --network "${NETWORK}" \
            $preemptible_agent \
            --can-ip-forward >&2
@@ -131,4 +135,4 @@ function mesos-up {
 }
 
 # run mesos cluster
-mesos-up
+mesos-up $1
