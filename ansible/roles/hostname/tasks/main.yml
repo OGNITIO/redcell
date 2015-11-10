@@ -21,7 +21,8 @@
     line: "::1{{'\t'}}{{var_hostname}}{{'\t'}}localhost{{'\t'}}ip6-localhost{{'\t'}}ip6-loopback"
 
 - name: Restart remote hosts
-  command: shutdown -r now "Ansible updates triggered"
+  command: shutdown -r +1 "Ansible updates triggered"
+  ignore_errors: yes
     
 - name: Reloading network configuration (waiting 1m20s)
   pause: seconds=80

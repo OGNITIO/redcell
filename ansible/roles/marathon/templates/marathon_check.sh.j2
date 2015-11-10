@@ -1,9 +1,9 @@
 #!/bin/bash
 
-declare -A JSON_KEYS_VALUES=(["\"http_port\":"]="{{marathon_http_port}}"
-                             ["\"ha\":"]="{{marathon_high_availability_mode}}"
-                             ["\"master\":"]="zk://{% for host in groups['mesos-master'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos"
-                             ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon")
+declare -A JSON_KEYS_VALUES=( ["\"http_port\":"]="{{marathon_http_port}}" 
+                              ["\"ha\":"]="{{marathon_high_availability_mode}}" 
+                              ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" 
+                              ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon" )
 
 
 PORT="{{marathon_http_port}}"

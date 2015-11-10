@@ -1,16 +1,9 @@
 # Listing of users
 
 users:
-  - username: stepan
-    name: Stepan Desmond
-    groups: "['{{users_primary_group}}', 'sudo']"
-    uid: 1001
-    ssh_keys:
-      - stepan-desmond.key
-
-  - username: cai
-    name: Cai Ilari
+  - username: will.smith
+    name: Will Smith
     groups: "['{{users_primary_group}}', 'sudo']"
     uid: 1002
     ssh_keys:
-      - cai-ilari.key
+      - example.key

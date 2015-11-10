@@ -1,16 +1,12 @@
 #!/bin/bash
 
-declare -A JSON_KEYS_VALUES_MASTER=(["\"port\":"]="{{mesos_masters_port}}"
-                                     ["\"quorum\":"]="{{mesos_master_quorum}}"
-                                     ["\"work_dir\":"]="{{mesos_work_dir}}"
-                                     ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos")
+declare -A JSON_KEYS_VALUES_MASTER=( ["\"port\":"]="{{mesos_masters_port}}" 
+                                     ["\"quorum\":"]="{{mesos_master_quorum}}" 
+                                     ["\"work_dir\":"]="{{mesos_work_dir}}" 
+                                     ["\"zk\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
 
-declare -A JSON_KEYS_VALUES_SLAVE=(["\"port\":"]="{{mesos_slaves_port}}"
-                             ["\"cpus\""]="{{mesos_slaves_cpus}}"
-                             ["\"mem\":"]="{{mesos_slaves_mem}}"
-                             ["\"disk\":"]="{{mesos_slaves_disk}}"
-                             ["\"ports\":"]="{{mesos_slaves_min_port}}-{{mesos_slaves_max_port}}"
-                             ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos")
+declare -A JSON_KEYS_VALUES_SLAVE=( ["\"port\":"]="{{mesos_slaves_port}}"
+                                    ["\"master\":"]="zk://{% for host in groups['zookeeper'] %}{{host}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos" )
 
 
 RESPONSE=

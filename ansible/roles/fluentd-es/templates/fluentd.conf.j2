@@ -8,7 +8,7 @@
   read_from_head true
 </source>
 
-{% if host in groups['marathon'] %}
+{% if inventory_hostname in groups['marathon'] %}
 <source>
   type tail
   path /var/log/marathon/marathon.log
@@ -18,7 +18,7 @@
 </source>
 {% endif %}
 
-{% if host in groups['zookeeper'] %}
+{% if inventory_hostname in groups['zookeeper'] %}
 <source>
   type tail
   path /var/log/zookeeper/zookeeper.log
@@ -28,7 +28,7 @@
 </source>
 {% endif %}
 
-{% if mesos_mode == 'slave' or mesos_mode == 'master-slave' %}
+{% if mesos_mode == 'master' or mesos_mode == 'master-slave' %}
 <source>
   type tail
   path /var/log/mesos/mesos-master.log
@@ -39,7 +39,7 @@
 </source>
 {% endif %}
 
-{% if mesos_mode == 'master' or mesos_mode == 'master-slave' %}
+{% if mesos_mode == 'slave' or mesos_mode == 'master-slave' %}
 <source>
   type tail
   path /var/log/mesos/mesos-slave.log

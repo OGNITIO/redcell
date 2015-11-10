@@ -89,12 +89,12 @@
 
 
 # Launch checking script
-- name: Launch slave checking script
-  command: "/tmp/mesos_check.sh slave {{ansible_eth0.ipv4.address}}"
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
-  ignore_errors: no
+# - name: Launch slave checking script
+#   command: "/tmp/mesos_check.sh slave {{ansible_eth0.ipv4.address}}"
+#   when: mesos_mode == "slave" or mesos_mode == "master-slave"
+#   ignore_errors: no
 
-- name: Launch master checking script
-  command: "/tmp/mesos_check.sh master {{ansible_eth0.ipv4.address}}"
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
-  ignore_errors: no
+# - name: Launch master checking script
+#   command: "/tmp/mesos_check.sh master {{ansible_eth0.ipv4.address}}"
+#   when: mesos_mode == "master" or mesos_mode == "master-slave"
+#   ignore_errors: no

@@ -12,4 +12,4 @@ marathon_java_opts_var: "-Xmx512m"
 marathon_http_port: "8080"
 
 # Definition of the High Availability mode
-marathon_high_availability_mode: true
+marathon_high_availability_mode: "true"
