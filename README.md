@@ -56,6 +56,7 @@ stack:
 
 ### Further work
 
+- Enable SSL within Mesos and frameworks
 - Authorization and authentication
 - Secret files distribution
 - Finer cloud providers deployment support (GCE, AWS, ...)
