@@ -2,13 +2,5 @@
 # Logrotate configuration
 #
 
-- name: Copy logrotate files
-  copy: src={{items}} dest=/etc/logrotate.d
-  with_items:
-    - mesos
-    - marathon
-    - zookeeper
-    - docker-containers
-
-- name: Copy logrotate script for hourly cron
-  copy: src=logrotate dest=/etc/cron.hourly mode=0755
+- include: install.yml
+  when: test != "true"

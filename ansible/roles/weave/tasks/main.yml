@@ -2,35 +2,5 @@
 # Weave network isolation configuration
 #
 
-# IMPORTANT: This step is quite unsage we might think about undertaking a
-# different approach to download and run the weave script.
-- name: Download weave script
-  get_url: url=git.io/weave dest=/usr/local/bin/weave mode=0755
-
-- name: Create the weave bridge
-  command: weave create-bridge
-
-- name: Expose weave bridge to the host
-  command: ip addr add dev weave {{weave_bridge_cidr}} # e.g. 10.2.0.2/16
-
-- name: Restart service docker
-  service: name=docker state=restart
-
-# Connect to existing network
-- name: Launch weave and connect to existing network
-  command: weave launch {{weave_network}} # e.g. 92.222.64.24
-  when: weave_network is defined
-
-- name: Launch weave
-  command: weave launch
-  when: weave_network is undefined
-
-- name: Edit mesos-slave environment 1/1
-  lineinfile:
-    dest=/etc/default/mesos-slave
-    line='export MESOS_DOCKER_SOCKET="/var/run/weave/weave.sock"'
-
-- name: Edit mesos-slave environment 2/2
-  lineinfile:
-    dest=/etc/default/mesos-slave
-    line='export MESOS_EXECUTOR_ENVIRONMENT_VARIABLES="{\"DOCKER_HOST\":\"unix:///var/run/weave/weave.sock\"}"'
+- include: install.yml
+  when: test != "true"

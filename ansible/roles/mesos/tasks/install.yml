@@ -1,0 +1,85 @@
+#
+# Install and configure Apache Mesos.
+#
+
+- name: Add apt_key for repos.mesosphere.io repo
+  apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
+
+- name: Add mesosphere repository
+  apt_repository: repo="deb http://repos.mesosphere.io/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}} main" state=present
+
+- name: Install packages needed for mesos
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - python-setuptools
+    - python-dev
+    - python-pip
+
+- name: Install Apache Mesos
+  apt: pkg="mesos" state=present install_recommends=no
+
+- name: Install mesos.cli
+  pip: name=mesos.cli
+
+- name: Removing the configuration files
+  file: path={{item}} state=absent
+  with_items:
+    - "/etc/mesos/zk"
+    - "/etc/mesos-master/quorum"
+    - "/etc/mesos-master/work_dir"
+    - "/etc/mesos-slave/master"
+    - "/tmp/mesos_check.sh"
+
+- name: Copy mesos configuration
+  template: src=default_mesos_conf.j2 dest=/etc/default/mesos
+
+# Mesos master tasks
+- name: Copy mesos-master configuration
+  template: src=default_mesos_master_conf.j2 dest=/etc/default/mesos-master
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Copy master syslog configuration file
+  copy: src=syslog-mesos-master.conf dest=/etc/syslog-ng/conf.d/mesos-master.conf
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Set the mesos slave to manual launch
+  template: src=manual.j2 dest=/etc/init/mesos-slave.override
+  when: mesos_mode == "master"
+  
+- name: Remove mesos-master.override
+  file: path="/etc/init/mesos-master.override" state=absent
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Stop mesos slave service
+  service: name=mesos-slave state=stopped
+  when: mesos_mode == "master"
+  
+- name: Start mesos master
+  service: name=mesos-master state=restarted
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+
+# Mesos slave tasks
+- name: Copy the mesos-slave configuration
+  template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Copy slave syslog configuration file
+  copy: src=syslog-mesos-slave.conf dest=/etc/syslog-ng/conf.d/mesos-slave.conf
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Set the mesos master to manual launch
+  template: src=manual.j2 dest=/etc/init/mesos-master.override
+  when: mesos_mode == "slave"
+
+- name: Stop mesos master service
+  service: name=mesos-master state=stopped
+  when: mesos_mode == "slave"
+
+- name: Remove mesos-slave.override file
+  file: path="/etc/init/mesos-slave.override" state=absent
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  
+- name: Start the mesos-slave service
+  service: name=mesos-slave state=restarted
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"

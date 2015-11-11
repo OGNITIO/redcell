@@ -1,0 +1,30 @@
+#
+# Configure and install Apache Zookeeper
+#
+
+- name: Installation of Apache Zookeeper
+  apt: name={{item}} update_cache=yes
+  with_items:
+    - zookeeper
+    - zookeeperd
+
+- name: Remove the default configuration files
+  file: path={{item}} state=absent
+  with_items:
+    - "/etc/zookeeper/conf/myid"
+    - "/etc/zookeeper/conf/zoo.cfg"
+    
+- name: Copy myid conf file into /etc/zookeeper/conf/
+  template: src=myid.j2 dest=/etc/zookeeper/conf/myid
+
+- name: Copy zoo.cfg conf file into /etc/zookeeper/conf/ (standalone)
+  template: src=zoo_standalone.j2 dest=/etc/zookeeper/conf/zoo.cfg
+  when: zookeeper_standalone == true
+
+- name: Copy zoo.cfg conf file into /etc/zookeeper/conf/ (replicated)
+  template: src=zoo_replicated.j2 dest=/etc/zookeeper/conf/zoo.cfg
+  when: zookeeper_standalone == false
+
+- name: Restart zookeeper
+  service: name=zookeeper state=restarted
+  

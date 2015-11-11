@@ -1,0 +1,21 @@
+#
+# Configure and install telegraf
+#
+
+- name: Create telegraf conf folder
+  file: path=/tmp/telegraf state=directory mode=0755
+
+- name: Copy Dockerfile
+  copy: src=Dockerfile dest=/tmp/telegraf
+
+- name: Copy launch script (run.sh)
+  copy: src=run.sh dest=/tmp/telegraf
+
+- name: Copy Telegraf configuration file
+  template: src=telegraf.conf.j2 dest=/tmp/telegraf/telegraf.conf
+
+- name: Building Telegrafs docker images
+  command: docker build -t telegraf /tmp/telegraf
+  
+- name: Run docker command
+  command: docker run --privileged=true --net=host --restart=always -d -v /proc:/mnt/proc:ro -v /sys:/sys:ro -v /var/run/docker.sock:/var/run/docker.sock:ro telegraf

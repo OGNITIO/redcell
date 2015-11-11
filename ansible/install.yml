@@ -1,6 +1,8 @@
 - name: Hosts default configuration
   hosts: all
   sudo: yes
+  vars:
+    test: "{{ testing }}"
   roles:
     - hostname
     - users
@@ -15,23 +17,31 @@
 - name: Mesos-DNS
   hosts: [mesos-dns, all]
   sudo: yes
+  vars:
+    test: "{{ testing }}"
   roles:
     - mesos-dns
    
 - name: Apache Zookeeper
   hosts: zookeeper
   sudo: yes
+  vars:
+    test: "{{ testing }}"
   roles:
     - zookeeper
     
 - name: Apache Mesos installation
   hosts: mesos
   sudo: yes
+  vars:
+    test: "{{ testing }}"
   roles:
     - mesos
 
 - name: Marathon schedulers
   hosts: marathon
   sudo: yes
+  vars:
+    test: "{{ testing }}"
   roles:
     - marathon

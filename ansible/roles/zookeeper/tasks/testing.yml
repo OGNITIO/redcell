@@ -1,0 +1,7 @@
+#
+# Test Apache Zookeeper
+#
+
+- name: Checking zookeeper up and running
+  command: /usr/share/zookeeper/bin/zkServer.sh status
+  ignore_errors: no

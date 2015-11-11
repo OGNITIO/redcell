@@ -1,37 +1,9 @@
 #
-# Install and configure Marathon
+# Install or test Marathon
 #
 
-- name: Add jessie-backports repo
-  apt_repository: repo="deb http://http.debian.net/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}}-backports main" state=present
+- include: testing.yml
+  when: test == "true"
 
-- name: Installation of open-jdk-8 and Marathon
-  apt: name={{item}} update_cache=yes
-  with_items:
-    - openjdk-8-jre-headless
-    - marathon
-
-- name: Remove default configuration file
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/default/marathon"
-    - "/etc/syslog-ng/conf.d/marathon.conf"
-    - "/tmp/marathon_check.sh"
-    
-- name: Copy default marathon configuration file
-  template: src=default_marathon_conf.j2 dest=/etc/default/marathon
-
-- name: Copy syslog configuration file
-  copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf
-
-- name: Start marathon
-  service: name=marathon state=started
-
-- name: Copy marathon checking script
-  template: src=marathon_check.sh.j2 dest=/tmp/marathon_check.sh mode=0744
-  when: "testing is defined and testing == true"
-
-- name: Launch marathon checking script
-  command: "/tmp/marathon_check.sh {{ansible_eth0.ipv4.address}}"
-  ignore_errors: no
-  when: "testing is defined and testing == true"
+- include: install.yml
+  when: test != "true"
