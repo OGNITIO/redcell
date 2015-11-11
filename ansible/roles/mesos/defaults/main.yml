@@ -47,7 +47,7 @@ mesos_slaves_os: "{{ansible_distribution|lower}}-{{ansible_distribution_release}
 mesos_slave_service_provider: "kimsufi"
 
 # List (either plain text or JSON) of accepted credentials
-mesos_credentials: /srv/mesos/credentials
+mesos_credentials_path: /srv/mesos/credentials
 
 # Credential used to identify the slave to the master
-mesos_slave_credential: /srv/mesos/agent_credential
+mesos_slave_credential_path: /srv/mesos/agent/agent_credential

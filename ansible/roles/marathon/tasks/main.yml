@@ -20,6 +20,7 @@
     
 - name: Copy default marathon configuration file
   template: src=default_marathon_conf.j2 dest=/etc/default/marathon
+  no_log: true
 
 - name: Copy syslog configuration file
   copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf

@@ -45,6 +45,15 @@
   copy: src=syslog-mesos-master.conf dest=/etc/syslog-ng/conf.d/mesos-master.conf
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
+- name: Create credential directory
+  file: path=/srv/mesos state=directory recurse=yes
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Copy mesos credentials
+  template: src=credentials.j2 dest=/srv/mesos/credentials mode=0600
+  no_log: true
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+  
 - name: Set the mesos slave to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-slave.override
   when: mesos_mode == "master"
@@ -61,7 +70,6 @@
   service: name=mesos-master state=restarted
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
-
 # Mesos slave tasks
 - name: Copy the mesos-slave configuration
   template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
@@ -69,6 +77,15 @@
 
 - name: Copy slave syslog configuration file
   copy: src=syslog-mesos-slave.conf dest=/etc/syslog-ng/conf.d/mesos-slave.conf
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Create credential directory
+  file: path=/srv/mesos/agent state=directory recurse=yes
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  
+- name: Copy agent credential
+  template: src=agent_credential.j2 dest=/srv/mesos/agent/credential mode=0600
+  no_log: true
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
 
 - name: Set the mesos master to manual launch
