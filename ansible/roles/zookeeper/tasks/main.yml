@@ -30,7 +30,9 @@
 
 - name: Awaits the launch of Zookeeper
   pause: seconds=10
+  when: "testing is defined and testing == true"
   
 - name: Checking zookeeper up and running
   command: /usr/share/zookeeper/bin/zkServer.sh status
   ignore_errors: no
+  when: "testing is defined and testing == true"
