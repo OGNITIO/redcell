@@ -24,5 +24,12 @@
 - name: Copy syslog configuration file
   copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf
 
+- name: Create mesos credentials directory
+  file: path="{{marathon_secret_dir}}" recurse=yes
+  
+- name: Copy mesos authentication secret
+  template: src=mesos_authentication_secret.j2 dest="{{marathon_secret_file}}" mode=0600
+  no_log: true
+  
 - name: Start marathon
   service: name=marathon state=started

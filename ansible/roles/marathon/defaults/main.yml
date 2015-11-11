@@ -13,3 +13,7 @@ marathon_http_port: "8080"
 
 # Definition of the High Availability mode
 marathon_high_availability_mode: "true"
+
+marathon_secret_dir: /srv/marathon
+
+marathon_secret_file: "{{marathon_secret_dir}}/credential"
