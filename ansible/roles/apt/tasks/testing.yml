@@ -1,0 +1,10 @@
+#
+# Testing apt installations
+#
+
+- name: Copy checking script
+  copy: src=check_apt.sh dest=/tmp/ mode=0744
+
+- name: Checking the packages installed
+  command: "/tmp/check_apt.sh {% for pkgs in apt_packages %}{{pkgs}} {% endfor %}"
+  ignore_errors: no

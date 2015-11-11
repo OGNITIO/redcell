@@ -1,15 +1,6 @@
 #
-# Configure and deploy registry-proxy
+# Install registry-proxy
 #
 
-- name: Create registry-proxy tmp folder
-  file: path=/tmp/registry-proxy state=directory mode=0755
-
-- name: Copy Dockerfile
-  copy: src=Dockerfile dest=/tmp/registry-proxy
-
-- name: Building registry-proxy docker image
-  command: docker build -t registry-proxy /tmp/registry-proxy
-
-- name: Run docker container
-  command: docker run --net=host --restart=always -d -e "FORWARD_PORT={{forward_port}}" -e "REGISTRY_HOST={{registry_hostname}}" -e "REGISTRY_PORT={{registry_port}}" registry-proxy
+- include: install.yml
+  when: test != "true"

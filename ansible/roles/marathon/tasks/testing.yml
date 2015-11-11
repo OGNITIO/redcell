@@ -1,0 +1,10 @@
+#
+# Testing Marathon
+#
+
+- name: Copy marathon checking script
+  template: src=marathon_check.sh.j2 dest=/tmp/marathon_check.sh mode=0744
+
+- name: Launch marathon checking script
+  command: "/tmp/marathon_check.sh {{ansible_eth0.ipv4.address}}"
+  ignore_errors: no

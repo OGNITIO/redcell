@@ -1,0 +1,9 @@
+#
+# Install and run Weave-scope
+#
+
+- name: Download weave scope script
+  get_url: url=https://github.com/weaveworks/scope/releases/download/latest_release/scope dest=/usr/local/bin/scope mode=0755
+
+- name: Launch weave scope
+  command: scope launch

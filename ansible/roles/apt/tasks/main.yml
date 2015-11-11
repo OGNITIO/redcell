@@ -1,16 +1,9 @@
 #
-# Install necessary packages
+# Install or test necessary packages
 #
 
-- name: Install requirements
-  apt: pkg={{item}} state=present update_cache=yes
-  with_items: apt_packages
+- include: testing.yml
+  when: test == "true"
 
-- name: Copy checking script
-  copy: src=check_apt.sh dest=/tmp/ mode=0744
-  when: "testing is defined and testing == true"
-
-- name: Checking the packages installed
-  command: "/tmp/check_apt.sh {% for pkgs in apt_packages %}{{pkgs}} {% endfor %}"
-  ignore_errors: no
-  when: "testing is defined and testing == true"
+- include: install.yml
+  when: test != "true"

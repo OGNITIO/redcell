@@ -1,0 +1,29 @@
+#
+# Install and configure Mesos-DNS
+#
+
+- name: Remove package no needed
+  apt: pkg="bind9" state=absent
+
+- name: Copy Mesos DNS tarball
+  copy: src=mesos-dns.tar dest=/tmp/mesos-dns.tar
+  when: "'mesos-dns' in group_names"
+
+- name: Extracting mesos-dns tarball
+  unarchive: src=/tmp/mesos-dns.tar dest=/usr/bin copy=no
+  when: "'mesos-dns' in group_names"
+
+- name: Copy configuration file for Mesos DNS
+  template: src=config.json.j2 dest="/tmp/config.json"
+  when: "'mesos-dns' in group_names"
+
+- name: Copy mesos-dns.service file
+  template: src=mesos-dns.service.j2 dest="/lib/systemd/system/mesos-dns.service"
+  when: "'mesos-dns' in group_names"
+
+- name: Start Mesos-DNS service
+  service: name=mesos-dns state=started
+  when: "'mesos-dns' in group_names"
+
+- name: Updating the resolv.conf
+  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="{% for host in groups['mesos-dns'] %}nameserver {{hostvars[host]['ansible_eth0']['ipv4']['address']}}{{'\n'}}{% endfor %}" state=present

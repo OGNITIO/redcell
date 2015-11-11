@@ -25,3 +25,9 @@ zookeeper_sync_limit: 2
 
 # Set to true if the zookeeper will run in standalone
 zookeeper_standalone: false
+
+# Zookeeper installation retries
+zookeeper_retries_number: 2
+
+# Number of delay between retires (in secondes)
+zookeeper_retries_delay: 3

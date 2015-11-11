@@ -1,0 +1,24 @@
+#
+# Install and run fluentd
+#
+
+- name: Create fluentd conf folder
+  file: path=/tmp/fluentd/conf state=directory mode=0755 recurse=yes
+
+- name: Copy Dockerfile
+  copy: src=Dockerfile dest=/tmp/fluentd
+
+- name: Copy launch script (run.sh)
+  copy: src=conf/fluentd.conf dest=/tmp/fluentd
+
+- name: Copy fluentd configuration
+  template: src=fluentd.conf.j2 dest=/tmp/fluentd/conf/fluentd.conf
+
+- name: Building fluentd docker image
+  command: docker build -t fluentd-es /tmp/fluentd
+
+- name: Create working directory
+  file: path=/var/lib/fluentd state=directory mode=0755
+
+- name: Run docker command
+  command: docker run --net=host --restart=always -d -v /var/log:/var/log:ro -v /var/lib/fluentd:/var/lib/fluentd:rw fluentd-es

@@ -4,3 +4,9 @@
 
 # Necessary packages
 apt_packages: ["apt-transport-https", "wget", "curl", "unzip", "syslog-ng", "git", "python-apt"]
+
+# Number of retires
+apt_retries_number: 2
+
+# Delay between the retires (in secondes)
+apt_retries_delay: 5
