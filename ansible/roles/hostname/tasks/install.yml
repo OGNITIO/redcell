@@ -22,6 +22,7 @@
 
 - name: Restart remote hosts
   command: shutdown --no-wall -r +1 "Ansible updates triggered"
-    
+  when: local != "true"
+  
 - name: Reloading network configuration (waiting 1m20s)
   pause: seconds=80

@@ -3,6 +3,7 @@
   any_errors_fatal: true
   sudo: yes
   vars:
+    local: "true"
     test: "{{ testing }}"
   roles:
     - hostname
