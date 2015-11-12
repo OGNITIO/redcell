@@ -5,18 +5,12 @@
   vars:
     local: "true"
     test: "{{ testing }}"
-    docker_distrib_repo: ubuntu
-    docker_release_repo: precise
   roles:
     - hostname
     - users
     - sudoers
     - apt
     - debian-auto-upgrade
-    - docker
-    - fluentd-es
-    - telegraf
-    - registry-proxy
 
 - name: Mesos-DNS
   hosts: [mesos-dns, all]
