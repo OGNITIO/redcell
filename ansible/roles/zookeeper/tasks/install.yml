@@ -16,14 +16,10 @@
     
 - name: Copy myid conf file into /etc/zookeeper/conf/
   template: src=myid.j2 dest=/etc/zookeeper/conf/myid
+  when: zookeeper_standalone != true
 
 - name: Copy zoo.cfg conf file into /etc/zookeeper/conf/ (standalone)
-  template: src=zoo_standalone.j2 dest=/etc/zookeeper/conf/zoo.cfg
-  when: zookeeper_standalone == true
-
-- name: Copy zoo.cfg conf file into /etc/zookeeper/conf/ (replicated)
-  template: src=zoo_replicated.j2 dest=/etc/zookeeper/conf/zoo.cfg
-  when: zookeeper_standalone == false
+  template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
 
 - name: Restart zookeeper
   service: name=zookeeper state=restarted
