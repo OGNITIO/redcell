@@ -1,4 +1,5 @@
 ## Red Cell: Cluster Configuration & Deployment
+[![Build Status](https://travis-ci.org/OGNITIO/redcell.svg)](https://travis-ci.org/OGNITIO/redcell)
 
 This repository contains scripts and configurations used at Ognitio to
 automate the deployment process of our clusters. As we run Apache Mesos

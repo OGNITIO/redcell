@@ -1,0 +1,53 @@
+- name: Hosts default configuration
+  hosts: all
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    test: "{{ testing }}"
+  roles:
+    - hostname
+    - users
+    - sudoers
+    - apt
+    - debian-auto-upgrade
+    - docker
+    - fluentd-es
+    - telegraf
+    - registry-proxy
+
+- name: Mesos-DNS
+  hosts: [mesos-dns, all]
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    test: "{{ testing }}"
+    zookeeper_standalone: true
+  roles:
+    - mesos-dns
+   
+- name: Apache Zookeeper
+  hosts: zookeeper
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    test: "{{ testing }}"
+  roles:
+    - zookeeper
+    
+- name: Apache Mesos installation
+  hosts: mesos
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    test: "{{ testing }}"
+  roles:
+    - mesos
+
+- name: Marathon schedulers
+  hosts: marathon
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    test: "{{ testing }}"
+  roles:
+    - marathon

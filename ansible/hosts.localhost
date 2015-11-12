@@ -1,0 +1,14 @@
+[all]
+localhost var_hostname=localhost mesos_mode=master-slave mesos_master_quorum=1 cluster_name=testing mesos_attributes=zone:cloud
+
+[zookeeper]
+localhost
+
+[mesos]
+localhost
+
+[marathon]
+localhost
+
+[mesos-dns]
+localhost
