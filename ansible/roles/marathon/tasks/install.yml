@@ -25,7 +25,7 @@
   copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf
 
 - name: Create marathon credential directory
-  file: path="{{marathon_secret_dir}}" recurse=yes
+  file: path="{{marathon_credential_dir}}" state=directory recurse=yes
   
 - name: Create marathon authentication credential file
   lineinfile: dest="{{marathon_credential_file}}" line="{{marathon_secret}}" create=yes mode=0600
