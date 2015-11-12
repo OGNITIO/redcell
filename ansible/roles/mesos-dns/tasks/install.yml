@@ -20,10 +20,20 @@
 - name: Copy mesos-dns.service file
   template: src=mesos-dns.service.j2 dest="/lib/systemd/system/mesos-dns.service"
   when: "'mesos-dns' in group_names"
-
+  
 - name: Start Mesos-DNS service
   service: name=mesos-dns state=started
   when: "'mesos-dns' in group_names"
+  
+- name: Checking /etc/resolvf.conf file
+  command: grep "{{hostvars[item]['ansible_default_ipv4']['address']}}" /etc/resolv.conf
+  register: "ret_values"
+  with_items: groups['mesos-dns']
+  ignore_errors: yes
 
 - name: Updating the resolv.conf
-  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="{% for host in groups['mesos-dns'] %}nameserver {{hostvars[host]['ansible_eth0']['ipv4']['address']}}{{'\n'}}{% endfor %}" state=present
+  when: 'item.1.rc != 0'
+  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="nameserver {{ hostvars[item.0]['ansible_default_ipv4']['address'] }}{{'\n'}}" state=present
+  with_together:
+    - groups['mesos-dns']
+    - "{{ ret_values.results }}"
