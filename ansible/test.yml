@@ -5,6 +5,8 @@
   vars:
     local: "true"
     test: "{{ testing }}"
+    docker_distrib_repo: ubuntu
+    docker_release_repo: precise
   roles:
     - hostname
     - users
