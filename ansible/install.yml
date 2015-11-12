@@ -1,5 +1,6 @@
 - name: Hosts default configuration
   hosts: all
+  any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
@@ -16,6 +17,7 @@
 
 - name: Mesos-DNS
   hosts: [mesos-dns, all]
+  any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
@@ -24,6 +26,7 @@
    
 - name: Apache Zookeeper
   hosts: zookeeper
+  any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
@@ -32,6 +35,7 @@
     
 - name: Apache Mesos installation
   hosts: mesos
+  any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
@@ -40,6 +44,7 @@
 
 - name: Marathon schedulers
   hosts: marathon
+  any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
