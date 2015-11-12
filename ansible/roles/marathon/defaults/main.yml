@@ -19,3 +19,6 @@ marathon_credential_dir: /srv/mesos/framework/marathon
 
 # Marathon framework credential file
 marathon_credential_file: "{{marathon_credential_dir}}/credential"
+
+# Definition of the Marathon libprocess ip
+marathon_libprocess_ip: "{{ansible_eth0.ipv4.address}}"
