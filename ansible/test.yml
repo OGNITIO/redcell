@@ -12,39 +12,12 @@
     - apt
     - debian-auto-upgrade
 
-- name: Mesos-DNS
-  hosts: [mesos-dns, all]
-  any_errors_fatal: true
-  sudo: yes
-  vars:
-    test: "{{ testing }}"
-    zookeeper_standalone: true
-  roles:
-    - mesos-dns
-   
 - name: Apache Zookeeper
   hosts: zookeeper
   any_errors_fatal: true
   sudo: yes
   vars:
     test: "{{ testing }}"
+    zookeeper_standalone: true
   roles:
     - zookeeper
-    
-- name: Apache Mesos installation
-  hosts: mesos
-  any_errors_fatal: true
-  sudo: yes
-  vars:
-    test: "{{ testing }}"
-  roles:
-    - mesos
-
-- name: Marathon schedulers
-  hosts: marathon
-  any_errors_fatal: true
-  sudo: yes
-  vars:
-    test: "{{ testing }}"
-  roles:
-    - marathon
