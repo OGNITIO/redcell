@@ -4,6 +4,5 @@ users:
   - username: will.smith
     name: Will Smith
     groups: "['{{users_primary_group}}', 'sudo']"
-    uid: 1002
     ssh_keys:
       - example.key
