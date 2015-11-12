@@ -26,3 +26,4 @@
   
 - name: Reloading network configuration (waiting 1m20s)
   pause: seconds=80
+  when: local != "true"
