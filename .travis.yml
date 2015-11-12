@@ -8,7 +8,7 @@ before_install:
 
 install:
   # Install Ansible.
-  - pip install ansible
+  - sudo pip install ansible
 
 script:
   # Check the role/playbook's syntax.
