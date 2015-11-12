@@ -275,7 +275,7 @@ function mesos-up {
     wait-for-jobs
 
     # Create all mesos agents with environment file defined inside ./agents
-    for file in ./agents/*; do
+    for file in ./groups/*; do
         echo -e "\033[0;32mCreating mesos agents. Instance group: $(basename $file)\033[0m"
         create-mesos-agents $file
     done
@@ -354,7 +354,7 @@ function create-mesos-agents {
 
 function mesos-down {
     # Create all mesos agents with environment file defined inside ./agents
-    for file in ./agents/*; do
+    for file in ./groups/*; do
         source $file
         
         local mesos_agent_tag="${MESOS_AGENT_TAG}-$(basename $file)"
