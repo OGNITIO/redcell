@@ -41,6 +41,7 @@
 - name: Copy master syslog configuration file
   copy: src=syslog-mesos-master.conf dest=/etc/syslog-ng/conf.d/mesos-master.conf
   when: mesos_mode == "master" or mesos_mode == "master-slave"
+  notify: Restart syslog-ng
 
 - name: Create mesos credentials directory
   file: path="{{mesos_credentials_dir}}" state=directory recurse=yes
@@ -67,7 +68,6 @@
   service: name=mesos-master state=restarted
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
-
 # Mesos slave tasks
 - name: Copy the mesos-slave configuration
   template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
@@ -76,6 +76,7 @@
 - name: Copy slave syslog configuration file
   copy: src=syslog-mesos-slave.conf dest=/etc/syslog-ng/conf.d/mesos-slave.conf
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  notify: Restart syslog-ng
 
 - name: Create mesos agent credential directory
   file: path="{{mesos_slave_credential_dir}}" state=directory recurse=yes

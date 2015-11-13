@@ -2,6 +2,9 @@
 # Handlers file for Marathon
 #
 
+- name: Restart syslog-ng
+  service: name=syslog-ng state=restarted
+
 # Task for start marathon
 - name: Start marathon
   service: name=marathon state=started

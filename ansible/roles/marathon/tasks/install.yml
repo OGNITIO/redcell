@@ -24,8 +24,12 @@
 - name: Copy marathon configuration file
   template: src=default_marathon_conf.j2 dest=/etc/sysconfig/marathon
 
+- name: Create marathon logging directory
+  file: path=/var/log/marathon state=directory recurse=yes
+  
 - name: Copy syslog configuration file
   copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf
+  notify: Restart syslog-ng
 
 - name: Create marathon credential directory
   file: path="{{marathon_credential_dir}}" state=directory recurse=yes

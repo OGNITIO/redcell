@@ -3,6 +3,9 @@
 # and configuration.
 #
 
+- name: Restart syslog-ng
+  service: name=syslog-ng state=restarted
+  
 ## Mesos master handlers
 - name: Start mesos-master
   service: name=mesos-master state=started
@@ -22,3 +25,4 @@
 
 - name: Stop mesos-slave
   service: name=mesos-slave state=stopped
+
