@@ -22,3 +22,6 @@ marathon_credential_file: "{{marathon_credential_dir}}/credential"
 
 # Definition of the Marathon libprocess ip
 marathon_libprocess_ip: "{{ansible_eth0.ipv4.address}}"
+
+# The advertised hostname that is used for the communication with the mesos master
+marathon_hostname: "{{inventory_hostname}}"
