@@ -9,7 +9,7 @@ ADMIN_PRIVATE_KEY="${HOME}/.ssh/${PROJECT}"
 
 GCLOUD_CMD="gcloud compute"
 
-# Wait for background jobs to finish.
+# Wait for background jobs to finish
 function wait-for-jobs {
     local fail=0
     local job
@@ -31,7 +31,7 @@ function add-inventory-hosts {
     done
 }
 
-# Generate Ansible inventory file for mesos cluster.
+# Generate Ansible inventory file for mesos cluster
 function generate-inventory-file {
     local master_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
@@ -85,10 +85,10 @@ function generate-inventory-file {
     add-inventory-hosts master_external_ips[@] $inventory_file
 
     echo $'\n'"[mesos-dns]" >> $inventory_file
-    echo $(IFS=$'\n'; echo "${master_external_ips[*]}" | head -1) >> $inventory_file
+    echo $(IFS=$'\n'; echo "${master_external_ips[*]}" | head -$DNS_REPLICAS) >> $inventory_file
 }
 
-# Create certificate pairs and credentials for the cluster.
+# Create certificate pairs and credentials for the cluster
 function make-certs-and-credentials {
     PKI_TEMP=$(mktemp -d -t pki.XXXXXX)
 
@@ -354,7 +354,7 @@ function mesos-up {
     echo -e "\033[0;32mThe admin keypair is located in $ADMIN_PRIVATE_KEY\033[0m"
 }
 
-# Delete a mesos cluster.
+# Delete a mesos cluster
 function mesos-down {
     # Create all mesos agents with environment file defined inside ./agents
     for file in ./groups/*; do
