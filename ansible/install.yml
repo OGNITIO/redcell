@@ -29,7 +29,7 @@
     test: "{{ testing }}"
   roles:
     - zookeeper
-    
+   
 - name: Apache Mesos installation
   hosts: mesos
   sudo: yes

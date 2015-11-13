@@ -25,15 +25,8 @@
   service: name=mesos-dns state=started
   when: "'mesos-dns' in group_names"
   
-- name: Checking /etc/resolvf.conf file
-  command: grep "{{hostvars[item]['ansible_default_ipv4']['address']}}" /etc/resolv.conf
-  register: "ret_values"
-  with_items: groups['mesos-dns']
-  ignore_errors: yes
+- name: Copy resolv.conf file
+  template: src=resolv.conf.j2 dest=/etc/resolv.conf
 
-- name: Updating the resolv.conf
-  when: 'item.1.rc != 0'
-  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="nameserver {{ hostvars[item.0]['ansible_default_ipv4']['address'] }}{{'\n'}}" state=present
-  with_together:
-    - groups['mesos-dns']
-    - "{{ ret_values.results }}"
+- name: Make the resolv.conf file permanent
+  command: chattr +i /etc/resolv.conf

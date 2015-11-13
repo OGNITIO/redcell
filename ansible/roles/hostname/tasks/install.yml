@@ -11,7 +11,7 @@
     dest: /etc/hosts
     state: present
     regexp: "^127.0.0.1"
-    line: "127.0.0.1{{'\t'}}{{var_hostname}}{{'\t'}}localhost{{'\t'}}localhost.localdomain{{'\n'}}"
+    line: "127.0.0.1{{'\t'}}{{var_hostname}}{{'\t'}}localhost{{'\t'}}localhost.localdomain"
 
 - name: Update IPv6 hostname /etc/hosts
   lineinfile:

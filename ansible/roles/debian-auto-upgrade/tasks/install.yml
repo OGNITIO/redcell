@@ -8,13 +8,6 @@
     - unattended-upgrades
     - apt-listchanges
 
-- name: Remove default configuration
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/apt/apt.conf.d/20auto-upgrades"
-    - "/etc/apt/apt.conf.d/02periodic"
-    - "/etc/apt/listchanges.conf"
-
 - name: Copy 20auto-upgrades
   template: src=20auto-upgrades.j2 dest=/etc/apt/apt.conf.d/20auto-upgrades
 

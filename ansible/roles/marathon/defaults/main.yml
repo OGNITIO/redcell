@@ -17,3 +17,7 @@ marathon_high_availability_mode: "true"
 marathon_secret_dir: /srv/marathon
 
 marathon_secret_file: "{{marathon_secret_dir}}/credential"
+
+marathon_principal: "Fake"
+
+marathon_secret: "toto"

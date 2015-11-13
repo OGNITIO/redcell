@@ -51,3 +51,12 @@ mesos_credentials_path: /srv/mesos/credentials
 
 # Credential used to identify the slave to the master
 mesos_slave_credential_path: /srv/mesos/agent/agent_credential
+
+# Fake credential
+mesos_credentials: "fake toto"
+
+# Fake principal agent
+agent_principal: "fake"
+
+# Fake agent secret
+agent_secret: "toto"

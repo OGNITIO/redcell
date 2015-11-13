@@ -21,14 +21,14 @@
 - name: Install mesos.cli
   pip: name=mesos.cli
 
-- name: Removing the configuration files
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/mesos/zk"
-    - "/etc/mesos-master/quorum"
-    - "/etc/mesos-master/work_dir"
-    - "/etc/mesos-slave/master"
-    - "/tmp/mesos_check.sh"
+#- name: Removing the configuration files
+#  file: path={{item}} state=absent
+#  with_items:
+#    - "/etc/mesos/zk"
+#    - "/etc/mesos-master/quorum"
+#    - "/etc/mesos-master/work_dir"
+#    - "/etc/mesos-slave/master"
+#    - "/tmp/mesos_check.sh"
 
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos
