@@ -11,13 +11,6 @@
     - openjdk-8-jre-headless
     - marathon
 
-- name: Remove existing configuration file
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/sysconfig/marathon"
-    - "/etc/syslog-ng/conf.d/marathon.conf"
-    - "/tmp/marathon_check.sh"
-
 - name: Create sysconfig directory
   file: path=/etc/sysconfig state=directory recurse=yes
     
@@ -33,10 +26,12 @@
 
 - name: Create marathon credential directory
   file: path="{{marathon_credential_dir}}" state=directory recurse=yes
+  when: marathon_principal is defined and marathon_secret is defined
   
 - name: Create marathon authentication credential file
   template: src=marathon_credential.j2 dest="{{marathon_credential_file}}" mode=0600
   no_log: true
+  when: marathon_principal is defined and marathon_secret is defined
   
 - name: Start marathon
   service: name=marathon state=started

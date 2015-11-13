@@ -21,15 +21,6 @@
 - name: Install mesos.cli
   pip: name=mesos.cli
 
-- name: Removing the configuration files
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/mesos/zk"
-    - "/etc/mesos-master/quorum"
-    - "/etc/mesos-master/work_dir"
-    - "/etc/mesos-slave/master"
-    - "/tmp/mesos_check.sh"
-
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos
 
@@ -45,12 +36,12 @@
 
 - name: Create mesos credentials directory
   file: path="{{mesos_credentials_dir}}" state=directory recurse=yes
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
+  when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
 
 - name: Create mesos credentials file
   lineinfile: dest="{{mesos_credentials_file}}" line="{{mesos_credentials}}" create=yes mode=0600
   no_log: true
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
+  when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
   
 - name: Set the mesos slave to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-slave.override
@@ -80,12 +71,14 @@
 
 - name: Create mesos agent credential directory
   file: path="{{mesos_slave_credential_dir}}" state=directory recurse=yes
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and
+        (agent_principal is defined and agent_secret is defined)
   
 - name: Copy agent credential
   lineinfile: dest="{{mesos_slave_credential_file}}" line="{{agent_principal}} {{agent_secret}}" create=yes mode=0600
   no_log: true
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and
+        (agent_principal is defined and agent_secret is defined)
 
 - name: Set the mesos master to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-master.override

@@ -8,12 +8,6 @@
     - zookeeper
     - zookeeperd
 
-- name: Remove the default configuration files
-  file: path={{item}} state=absent
-  with_items:
-    - "/etc/zookeeper/conf/myid"
-    - "/etc/zookeeper/conf/zoo.cfg"
-    
 - name: Copy myid conf file into /etc/zookeeper/conf/
   template: src=myid.j2 dest=/etc/zookeeper/conf/myid
   when: zookeeper_standalone != true
@@ -23,4 +17,3 @@
 
 - name: Restart zookeeper
   service: name=zookeeper state=restarted
-  

@@ -32,7 +32,7 @@
     test: "{{ testing }}"
   roles:
     - zookeeper
-    
+   
 - name: Apache Mesos installation
   hosts: mesos
   any_errors_fatal: true
