@@ -70,11 +70,12 @@ function generate-inventory-file {
     echo $'\n'"[zookeeper]" >> $inventory_file
     for i in "${!master_external_ips[@]}"; do
         # If a single master is present run zookeeper in standalone mode.
+        local zookeeper_extra=""
         if [[ "${#master_external_ips[@]}" == 1 ]]; then
-            echo -e "${master_external_ips[$i]}\t zookeeper_standalone=true" >> $inventory_file
-        else
-            echo -e "${master_external_ips[$i]}\t zoo_id=$i" >> $inventory_file
+            zookeeper_extra="zookeeper_standalone=true"
         fi
+
+        echo -e "${master_external_ips[$i]}\t zoo_id=$i $zookeeper_extra" >> $inventory_file
     done
 
     echo $'\n'"[mesos]" >> $inventory_file
