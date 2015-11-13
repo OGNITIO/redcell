@@ -6,7 +6,6 @@
     local: "true"
     test: "{{ testing }}"
   roles:
-    - hostname
     - users
     - sudoers
     - apt
