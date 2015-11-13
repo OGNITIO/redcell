@@ -305,11 +305,6 @@ function mesos-up {
                --type "${MESOS_MASTER_DISK_TYPE}" \
                --size "${MESOS_MASTER_DISK_SIZE}"
 
-        local preemptible_master=""
-        if [[ "${PREEMPTIBLE_MASTER}" == true ]]; then
-            preemptible_master="--preemptible --maintenance-policy TERMINATE"
-        fi
-
         $GCLOUD_CMD instances create "${mesos_master_tags[$i]}" \
                --project "${PROJECT}" \
                --zone "${ZONE}" \
@@ -320,7 +315,6 @@ function mesos-up {
                --can-ip-forward \
                --metadata-from-file startup-script=configure-instance.sh \
                --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
-               $preemptible_master \
                --disk "name=${mesos_master_tags[$i]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
