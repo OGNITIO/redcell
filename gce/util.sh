@@ -335,8 +335,13 @@ function mesos-up {
     
     sleep 10
 
+    echo -e "\033[0;32mRun Ansible install playbook\033[0m"
     cd $REDCELL_ROOT/ansible
-    ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" --ask-vault-pass install.yml
+    if ! ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" --ask-vault-pass install.yml; then
+        echo -e "\033[0;31mAnsible install playbook failed\033[0m"
+        echo -e "\033[0;33mThe playbook can be restarted: ./util.sh ansible <ansible paramters>\033[0m"
+        exit 1
+    fi
 
     local master_external_ips=($($GCLOUD_CMD instances list \
                                              --zone="${ZONE}" \
@@ -445,8 +450,9 @@ GCE cluster deployment utility flags
 
 General options:
 
-up      : Start new mesos cluster
-down    : Shutdown mesos cluster
+run     : Start new mesos cluster
+stop    : Shutdown mesos cluster
+ansible : Ansible install playbook only
 "
 }
 
@@ -455,15 +461,15 @@ down    : Shutdown mesos cluster
 cmd="$1"
 [ -n "$1" ] && shift # scrape off command
 case "$cmd" in
-    up)
+    run)
         # Generate admin private key
         ssh-keygen -b 2048 -t rsa -f $ADMIN_PRIVATE_KEY -q -N ""
         mesos-up
         ;;
-    down)
+    stop)
         mesos-down
         ;;
-    ansible-only)
+    ansible)
         cd $REDCELL_ROOT/ansible
         ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" --ask-vault-pass install.yml ${@:2}
         ;;
