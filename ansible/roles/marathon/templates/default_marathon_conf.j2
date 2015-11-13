@@ -3,22 +3,22 @@
 LIBPROCESS_IP={{marathon_libprocess_ip}}
 
 # Definition of the JAVA_HOME path
-export JAVA_HOME={{marathon_java_home_path}}
+JAVA_HOME={{marathon_java_home_path}}
 
 # Definition of the JAVA_OPTS
-export JAVA_OPTS={{marathon_java_opts_var}}
+JAVA_OPTS={{marathon_java_opts_var}}
 
 # Definition of the masters
-export MARATHON_MASTER=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
+MARATHON_MASTER=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos
 
 # Definition of Marathon's znode in the zookeepers
-export MARATHON_ZK=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon
+MARATHON_ZK=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/marathon
 
 # Definition of http_port of Marathon
-export MARATHON_HTTP_PORT={{marathon_http_port}}
+MARATHON_HTTP_PORT={{marathon_http_port}}
 
 # Definition of the WEBUI Url
-export MARATHON_WEBUI_URL="{{inventory_hostname}}:8080"
+MARATHON_WEBUI_URL="{{inventory_hostname}}:8080"
 
-export MARATHON_MESOS_AUTHENTICATION_PRINCIPAL="{{marathon_principal}}"
-export MARATHON_MESOS_AUTHENTICATION_SECRET_FILE="{{marathon_credential_file}}"
+MARATHON_MESOS_AUTHENTICATION_PRINCIPAL="{{marathon_principal}}"
+MARATHON_MESOS_AUTHENTICATION_SECRET_FILE="{{marathon_credential_file}}"
