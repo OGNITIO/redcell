@@ -20,7 +20,7 @@ MARATHON_HTTP_PORT={{marathon_http_port}}
 # Definition of the WEBUI Url
 MARATHON_WEBUI_URL="{{inventory_hostname}}:8080"
 
-{{% if marathon_principal is defined and marathon_secret is defined %}}
+{% if marathon_principal is defined and marathon_secret is defined %}
 MARATHON_MESOS_AUTHENTICATION_PRINCIPAL="{{marathon_principal}}"
 MARATHON_MESOS_AUTHENTICATION_SECRET_FILE="{{marathon_credential_file}}"
-{{% endif %}}
+{% endif %}
