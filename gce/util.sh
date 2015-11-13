@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
+# This script contains helper functions to deploy mesos clusters on GCE.
 
 REDCELL_ROOT=$(pwd)/..
 source $REDCELL_ROOT/gce/config-env.sh
@@ -11,6 +9,7 @@ ADMIN_PRIVATE_KEY="${HOME}/.ssh/${PROJECT}"
 
 GCLOUD_CMD="gcloud compute"
 
+# Wait for background jobs to finish.
 function wait-for-jobs {
     local fail=0
     local job
@@ -22,6 +21,8 @@ function wait-for-jobs {
     fi
 }
 
+# Add inventory hosts in a given file
+# $1: Path to a file
 function add-inventory-hosts {
     local hosts=("${!1}")
     local file=$2
@@ -30,16 +31,17 @@ function add-inventory-hosts {
     done
 }
 
+# Generate Ansible inventory file for mesos cluster.
 function generate-inventory-file {
-    local master_external_ips=($(gcloud compute instances list --regexp="${MESOS_MASTER_NAME}.*" \
+    local master_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local master_hostnames=($(gcloud compute instances list --regexp="${MESOS_MASTER_NAME}.*" \
+    local master_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-    local agent_external_ips=($(gcloud compute instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local agent_hostnames=($(gcloud compute instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-    local agent_attributes=($(gcloud compute instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_attributes=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | awk '/mesos-agent-attributes/{getline; print}' | sed 's/^ *//' | cut -d ' ' -f 2))
 
     local inventory_file=$1
@@ -67,7 +69,12 @@ function generate-inventory-file {
 
     echo $'\n'"[zookeeper]" >> $inventory_file
     for i in "${!master_external_ips[@]}"; do
-        echo -e "${master_external_ips[$i]}\t zoo_id=$i" >> $inventory_file
+        # If a single master is present run zookeeper in standalone mode.
+        if [[ "${#master_external_ips[@]}" == 1 ]]; then
+            echo -e "${master_external_ips[$i]}\t zookeeper_standalone=true" >> $inventory_file
+        else
+            echo -e "${master_external_ips[$i]}\t zoo_id=$i" >> $inventory_file
+        fi
     done
 
     echo $'\n'"[mesos]" >> $inventory_file
@@ -87,10 +94,10 @@ function make-certs-and-credentials {
 
     local -a ips
     local -a hostnames
-    local master_external_ips=($(gcloud compute instances list \
+    local master_external_ips=($($GCLOUD_CMD instances list \
             --zone="${ZONE}" --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local master_hostnames=($(gcloud compute instances list \
+    local master_hostnames=($($GCLOUD_CMD instances list \
             --zone="${ZONE}" --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
 
@@ -98,9 +105,9 @@ function make-certs-and-credentials {
     hostnames=("${master_hostnames[@]/#/DNS:}")
     local -r mesos_sans="$(IFS=$','; echo "${ips[*]}"),$(IFS=$','; echo "${hostnames[*]}")"
 
-    local agent_external_ips=($(gcloud compute instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local agent_hostnames=($(gcloud compute instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
 
     ips=("${agent_external_ips[@]/#/IP:}")
@@ -200,6 +207,57 @@ EOF
     done
 }
 
+# Create mesos agent template and run instance groups
+function create-mesos-agents {
+    local mesos_agent_name="${MESOS_AGENT_NAME}-$(basename $1)"
+    local mesos_agent_tag="${MESOS_AGENT_TAG}-$(basename $1)"
+
+    source $1
+
+    local mesos_agent_attributes="os:${MESOS_OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${MESOS_AGENT_ZONE}"
+
+    $GCLOUD_CMD firewall-rules create "${mesos_agent_tag}-all" \
+                --project "${PROJECT}" \
+                --network "${NETWORK}" \
+                --source-ranges "${CLUSTER_IP_RANGE}" \
+                --target-tags "${mesos_agent_tag}" \
+                --allow tcp,udp,icmp,esp,ah,sctp
+
+    local preemptible_agent_args=""
+    if [[ "${PREEMPTIBLE_AGENT}" == true ]]; then
+        preemptible_agent_args="--preemptible --maintenance-policy TERMINATE"
+    fi
+
+    local template_name="${mesos_agent_tag}-template"
+
+    $GCLOUD_CMD instance-templates create "$template_name" \
+                --project "${PROJECT}" \
+                --machine-type "${MESOS_AGENT_TYPE}" \
+                --boot-disk-type "${MESOS_AGENT_DISK_TYPE}" \
+                --boot-disk-size "${MESOS_AGENT_DISK_SIZE}" \
+                --image "${MESOS_AGENT_IMAGE}" \
+                --tags "${mesos_agent_tag}" \
+                --metadata-from-file startup-script=configure-instance.sh \
+                --metadata "admin_key=$(cat $ADMIN_PRIVATE_KEY.pub),mesos-agent-attributes=${mesos_agent_attributes}" \
+                --network "${NETWORK}" \
+                $preemptible_agent_args \
+                --can-ip-forward >&2
+
+    $GCLOUD_CMD instance-groups managed \
+                create "${mesos_agent_tag}-group" \
+                --project "${PROJECT}" \
+                --zone "${MESOS_AGENT_ZONE}" \
+                --base-instance-name "${mesos_agent_tag}" \
+                --size "${NUM_CLUSTER_AGENTS}" \
+                --template "$template_name" || true;
+
+    $GCLOUD_CMD instance-groups managed wait-until-stable \
+                "${mesos_agent_tag}-group" \
+                --zone "${MESOS_AGENT_ZONE}" \
+                --project "${PROJECT}" || true;
+}
+
+# Create a mesos cluster
 function mesos-up {
     if ! $GCLOUD_CMD networks --project "${PROJECT}" describe "${NETWORK}" &>/dev/null; then
         echo -e "\033[0;32mCreating new network: ${NETWORK}\033[0m"
@@ -237,6 +295,9 @@ function mesos-up {
 
     echo -e "\033[0;32mCreating mesos masters.\033[0m"
 
+    # No instance template/group is created, as static ip addresses
+    # will be created and assigned to each one of the master
+    # instances. 
     for i in $(seq 1 $NUM_MESOS_MASTER); do
         $GCLOUD_CMD disks create "${mesos_master_tags[$i]}-pd" \
                --project "${PROJECT}" \
@@ -244,21 +305,11 @@ function mesos-up {
                --type "${MESOS_MASTER_DISK_TYPE}" \
                --size "${MESOS_MASTER_DISK_SIZE}"
 
-
-        # $GCLOUD_CMD addresses create "${mesos_master_tags[$i]}-ip" \
-        #        --project "${PROJECT}" \
-        #        --region "${REGION}" -q
-
-        # MASTER_RESERVED_IP=$($GCLOUD_CMD addresses describe "${mesos_master_tags[$i]}-ip" \
-        #                             --project "${PROJECT}" \
-        #                             --region "${REGION}" -q --format yaml | awk '/^address:/ { print $2 }')
-
         local preemptible_master=""
         if [[ "${PREEMPTIBLE_MASTER}" == true ]]; then
             preemptible_master="--preemptible --maintenance-policy TERMINATE"
         fi
 
-        # --address "${MASTER_RESERVED_IP}" \
         $GCLOUD_CMD instances create "${mesos_master_tags[$i]}" \
                --project "${PROJECT}" \
                --zone "${ZONE}" \
@@ -269,6 +320,7 @@ function mesos-up {
                --can-ip-forward \
                --metadata-from-file startup-script=configure-instance.sh \
                --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
+               $preemptible_master \
                --disk "name=${mesos_master_tags[$i]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
@@ -303,55 +355,7 @@ function mesos-up {
     echo -e "\033[0;32mThe admin keypair is located in $ADMIN_PRIVATE_KEY\033[0m"
 }
 
-function create-mesos-agents {
-    local mesos_agent_name="${MESOS_AGENT_NAME}-$(basename $1)"
-    local mesos_agent_tag="${MESOS_AGENT_TAG}-$(basename $1)"
-    
-    source $1
-
-    local mesos_agent_attributes="os:${MESOS_OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${MESOS_AGENT_ZONE}"
-    
-    $GCLOUD_CMD firewall-rules create "${mesos_agent_tag}-all" \
-                --project "${PROJECT}" \
-                --network "${NETWORK}" \
-                --source-ranges "${CLUSTER_IP_RANGE}" \
-                --target-tags "${mesos_agent_tag}" \
-                --allow tcp,udp,icmp,esp,ah,sctp
-
-    local preemptible_agent_args=""
-    if [[ "${PREEMPTIBLE_AGENT}" == true ]]; then
-        preemptible_agent_args="--preemptible --maintenance-policy TERMINATE"
-    fi
-    
-    local template_name="${mesos_agent_tag}-template"
-
-    $GCLOUD_CMD instance-templates create "$template_name" \
-                --project "${PROJECT}" \
-                --machine-type "${MESOS_AGENT_TYPE}" \
-                --boot-disk-type "${MESOS_AGENT_DISK_TYPE}" \
-                --boot-disk-size "${MESOS_AGENT_DISK_SIZE}" \
-                --image "${MESOS_AGENT_IMAGE}" \
-                --tags "${mesos_agent_tag}" \
-                --metadata-from-file startup-script=configure-instance.sh \
-                --metadata "admin_key=$(cat $ADMIN_PRIVATE_KEY.pub),mesos-agent-attributes=${mesos_agent_attributes}" \
-                --network "${NETWORK}" \
-                $preemptible_agent_args \
-                --can-ip-forward >&2
-
-    $GCLOUD_CMD instance-groups managed \
-                create "${mesos_agent_tag}-group" \
-                --project "${PROJECT}" \
-                --zone "${MESOS_AGENT_ZONE}" \
-                --base-instance-name "${mesos_agent_tag}" \
-                --size "${NUM_CLUSTER_AGENTS}" \
-                --template "$template_name" || true;
-
-    $GCLOUD_CMD instance-groups managed wait-until-stable \
-                "${mesos_agent_tag}-group" \
-                --zone "${MESOS_AGENT_ZONE}" \
-                --project "${PROJECT}" || true;
-}
-
+# Delete a mesos cluster.
 function mesos-down {
     # Create all mesos agents with environment file defined inside ./agents
     for file in ./groups/*; do
