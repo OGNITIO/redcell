@@ -334,7 +334,7 @@ function mesos-up {
     echo -e "\033[0;32mGenerate certificates and credentials\033[0m"
     make-certs-and-credentials
 
-    if [[ $NO_ANSIBLE_INSTALL != "true" ]]; then
+    if [[ $NO_ANSIBLE_INSTALL == "true" ]]; then
         echo -e "\033[0;32mAnsible install playbook is ready to be used\033[0m"
         exit 0
     fi
@@ -467,7 +467,7 @@ while :; do
 
     case "$opt" in
         --no-ansible-install)
-            export NO_ANSIBLE_INSTALL=true;;
+            NO_ANSIBLE_INSTALL=true;;
         *)
             break ;;
     esac
