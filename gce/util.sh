@@ -238,7 +238,7 @@ function create-mesos-agents {
                 --image "${MESOS_AGENT_IMAGE}" \
                 --tags "${mesos_agent_tag}" \
                 --metadata-from-file startup-script=configure-instance.sh \
-                --metadata "admin_key=$(cat $ADMIN_PRIVATE_KEY.pub),mesos-agent-attributes=${mesos_agent_attributes}" \
+                --metadata "admin-key=$(cat $ADMIN_PRIVATE_KEY.pub),mesos-agent-attributes=${mesos_agent_attributes}" \
                 --network "${NETWORK}" \
                 $preemptible_agent_args \
                 --can-ip-forward >&2
@@ -314,7 +314,7 @@ function mesos-up {
                --network "${NETWORK}" \
                --can-ip-forward \
                --metadata-from-file startup-script=configure-instance.sh \
-               --metadata admin_key="$(cat $ADMIN_PRIVATE_KEY.pub)" \
+               --metadata "admin-key=$(cat $ADMIN_PRIVATE_KEY.pub)" \
                --disk "name=${mesos_master_tags[$i]}-pd,device-name=master-pd,mode=rw,boot=no,auto-delete=no" &
     done
 
