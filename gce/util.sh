@@ -33,16 +33,22 @@ function add-inventory-hosts {
 
 # Generate Ansible inventory file for mesos cluster
 function generate-inventory-file {
-    local master_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_MASTER_NAME}.*" \
+    local master_external_ips=($($GCLOUD_CMD instances list \
+            --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local master_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_MASTER_NAME}.*" \
+    local master_hostnames=($($GCLOUD_CMD instances list \
+            --regexp="${MESOS_MASTER_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-    local agent_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_external_ips=($($GCLOUD_CMD instances list \
+            --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local agent_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
+    local agent_hostnames=($($GCLOUD_CMD instances list \
+            --regexp="${MESOS_AGENT_NAME}.*" \
             --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-    local agent_attributes=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
-            --format=yaml | awk '/mesos-agent-attributes/{getline; print}' | sed 's/^ *//' | cut -d ' ' -f 2))
+    local agent_attributes=($($GCLOUD_CMD instances list \
+            --regexp="${MESOS_AGENT_NAME}.*" \
+            --format=yaml | awk '/mesos-agent-attributes/{getline; print}' | \
+                                     sed 's/^ *//' | cut -d ' ' -f 2))
 
     local inventory_file=$1
 
@@ -52,6 +58,7 @@ function generate-inventory-file {
     echo $'\n'"[all]" >> $inventory_file
     for i in "${!master_external_ips[@]}"; do
         local host_vars="mesos_mode=master mesos_master_quorum=$(((${#master_external_ips[@]}/2)+1)) cluster_name=${CLOUD}-${REGION}"
+
         echo -e "${master_external_ips[$i]}\t var_hostname=${master_hostnames[$i]} $host_vars" >> $inventory_file
     done
     for i in "${!agent_external_ips[@]}"; do
@@ -140,7 +147,7 @@ function make-certs-and-credentials {
 
     rm -rf $group_vars_dir && mkdir -p $group_vars_dir
     rm -rf $host_vars_dir && mkdir -p $host_vars_dir
-    
+
     for i in "${!agent_hostnames[@]}"; do
         cat > "$host_vars_dir/${agent_external_ips[$i]}" <<EOF
 ---
@@ -338,7 +345,7 @@ function mesos-up {
         echo -e "\033[0;32mAnsible install playbook is ready to be used\033[0m"
         exit 0
     fi
-    
+
     sleep 10
 
     echo -e "\033[0;32mRun Ansible install playbook\033[0m"
@@ -365,7 +372,7 @@ function mesos-down {
     # Create all mesos agents with environment file defined inside ./agents
     for file in ./groups/*; do
         source $file
-        
+
         local mesos_agent_tag="${MESOS_AGENT_TAG}-$(basename $file)"
 
         # Delete agents group
