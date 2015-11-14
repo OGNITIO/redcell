@@ -39,8 +39,9 @@
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
 
 - name: Create mesos credentials file
-  lineinfile: dest="{{mesos_credentials_file}}" line="{{mesos_credentials}}" create=yes mode=0600
+  lineinfile: dest="{{mesos_credentials_file}}" line="{{item.key}} {{item.value}}" create=yes mode=0600
   no_log: true
+  with_dict: "{{mesos_credentials}}"
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
   
 - name: Set the mesos slave to manual launch
@@ -71,14 +72,12 @@
 
 - name: Create mesos agent credential directory
   file: path="{{mesos_slave_credential_dir}}" state=directory recurse=yes
-  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and
-        (agent_principal is defined and agent_secret is defined)
+  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and mesos_credentials is defined
   
 - name: Copy agent credential
-  lineinfile: dest="{{mesos_slave_credential_file}}" line="{{agent_principal}} {{agent_secret}}" create=yes mode=0600
+  lineinfile: dest="{{mesos_slave_credential_file}}" line="{{var_hostname}} {{mesos_credentials[var_hostname]}}" create=yes mode=0600
   no_log: true
-  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and
-        (agent_principal is defined and agent_secret is defined)
+  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and mesos_credentials is defined
 
 - name: Set the mesos master to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-master.override

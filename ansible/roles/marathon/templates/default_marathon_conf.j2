@@ -22,7 +22,7 @@ MARATHON_WEBUI_URL="{{inventory_hostname}}:8080"
 
 MARATHON_HOSTNAME="{{marathon_hostname}}"
 
-{% if marathon_principal is defined and marathon_secret is defined %}
-MARATHON_MESOS_AUTHENTICATION_PRINCIPAL="{{marathon_principal}}"
+{% if mesos_credentials is defined %}
+MARATHON_MESOS_AUTHENTICATION_PRINCIPAL="mesos-framework-marathon"
 MARATHON_MESOS_AUTHENTICATION_SECRET_FILE="{{marathon_credential_file}}"
 {% endif %}

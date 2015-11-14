@@ -96,115 +96,71 @@ function generate-inventory-file {
     echo $(IFS=$'\n'; echo "${master_external_ips[*]}" | head -$DNS_REPLICAS) >> $inventory_file
 }
 
-# Create certificate pairs and credentials for the cluster
-function make-certs-and-credentials {
-    PKI_TEMP=$(mktemp -d -t pki.XXXXXX)
+# Generate mesos agent credentials
+#
+# Vars set:
+# AGENT_CREDENTIALS
+function make-agent-credentials {
+    local agent_external_ips=($($GCLOUD_CMD instances list \
+                                            --regexp="${MESOS_AGENT_NAME}.*" \
+                                            --format=yaml | grep -i natip | \
+                                       sed 's/^ *//' | cut -d ' ' -f 2))
+    local agent_hostnames=($($GCLOUD_CMD instances list \
+                                         --regexp="${MESOS_AGENT_NAME}.*" \
+                                         --format=yaml | egrep "^name" | \
+                                    cut -d ' ' -f 2))
 
-    local -a ips
-    local -a hostnames
-    local master_external_ips=($($GCLOUD_CMD instances list \
-            --zone="${ZONE}" --regexp="${MESOS_MASTER_NAME}.*" \
-            --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local master_hostnames=($($GCLOUD_CMD instances list \
-            --zone="${ZONE}" --regexp="${MESOS_MASTER_NAME}.*" \
-            --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-
-    ips=("${master_external_ips[@]/#/IP:}")
-    hostnames=("${master_hostnames[@]/#/DNS:}")
-    local -r mesos_sans="$(IFS=$','; echo "${ips[*]}"),$(IFS=$','; echo "${hostnames[*]}")"
-
-    local agent_external_ips=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
-            --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-    local agent_hostnames=($($GCLOUD_CMD instances list --regexp="${MESOS_AGENT_NAME}.*" \
-            --format=yaml | egrep "^name" | cut -d ' ' -f 2))
-
-    ips=("${agent_external_ips[@]/#/IP:}")
-    hostnames=("${agent_hostnames[@]/#/DNS:}")
-    local -r agent_sans="$(IFS=$','; echo "${ips[*]}"),$(IFS=$','; echo "${hostnames[*]}")"
-
-    (cd $PKI_TEMP
-     curl -L -O https://github.com/OpenVPN/easy-rsa/releases/download/3.0.1/EasyRSA-3.0.1.tgz > /dev/null 2>&1
-     tar xzf EasyRSA-3.0.1.tgz > /dev/null 2>&1
-     cd EasyRSA-3.0.1
-    ./easyrsa init-pki
-    ./easyrsa --batch build-ca nopass > /dev/null 2>&1
-    ./easyrsa --subject-alt-name="${mesos_sans}" build-server-full mesos nopass > /dev/null 2>&1
-    ./easyrsa --subject-alt-name="${agent_sans}" build-server-full agent nopass > /dev/null 2>&1
-    ./easyrsa --subject-alt-name="${mesos_sans}" build-server-full marathon nopass > /dev/null 2>&1)
-
-    local -a agent_credentials
     for i in "${!agent_hostnames[@]}"; do
-        local agent_principal="${agent_hostnames[$i]}"
-        local agent_secret=$(python -c 'import string,random; \
+        local principal="${agent_hostnames[$i]}"
+        local secret=$(python -c 'import string,random; \
       print "".join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))')
-        agent_credentials[$i]="$agent_principal $agent_secret"
+        if [[ $AGENT_CREDENTIALS == "" ]]; then
+            AGENT_CREDENTIALS="$principal: \"$secret\""
+        else
+            AGENT_CREDENTIALS="$AGENT_CREDENTIALS\n$principal: \"$secret\""
+        fi
     done
+}
 
-    CERT_DIR=${PKI_TEMP}/EasyRSA-3.0.1
+# Generate framework credentials
+#
+# $1: The framework's name
+#
+# Vars set:
+# FRAMEWORK_CREDENTIALS
+function make-framework-credentials {
+    local principal="mesos-framework-$1"
+    local secret=$(python -c 'import string,random; \
+      print "".join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))')
+    if [[ $FRAMEWORK_CREDENTIALS == "" ]]; then
+        FRAMEWORK_CREDENTIALS="$principal: \"$secret\""
+    else
+        FRAMEWORK_CREDENTIALS="$FRAMEWORK_CREDENTIALS\n$principal: \"$secret\""
+    fi
+}
+
+# Generate necessary mesos credentials
+#
+# Vars set:
+# AGENT_CREDENTIALS
+# FRAMEWORK_CREDENTIALS
+function make-credentials {
+    make-agent-credentials
+    make-framework-credentials "marathon"
 
     local group_vars_dir=$REDCELL_ROOT/ansible/group_vars
-    local host_vars_dir=$REDCELL_ROOT/ansible/host_vars
-
     rm -rf $group_vars_dir && mkdir -p $group_vars_dir
-    rm -rf $host_vars_dir && mkdir -p $host_vars_dir
-
-    for i in "${!agent_hostnames[@]}"; do
-        cat > "$host_vars_dir/${agent_external_ips[$i]}" <<EOF
+    cat > "$group_vars_dir/all" <<EOF
 ---
-ca_crt: |
-$(cat ${CERT_DIR}/pki/ca.crt | sed 's/^/    /')
-
-agent_principal: "$(echo ${agent_credentials[$i]} | cut -d ' ' -f 1)"
-
-agent_secret: "$(echo ${agent_credentials[$i]} | cut -d ' ' -f 2)"
-
-agent_ssl_key: |
-$(cat ${CERT_DIR}/pki/private/agent.key | sed 's/^/    /')
-
-agent_ssl_crt: |
-$(cat ${CERT_DIR}/pki/issued/agent.crt | sed 's/^/    /')
-EOF
-    done
-
-    local marathon_principal="mesos-framework-marathon"
-    local marathon_secret=$(python -c 'import string,random; \
-      print "".join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16))')
-
-    cat > $group_vars_dir/marathon <<EOF
----
-ca_crt: |
-$(cat ${CERT_DIR}/pki/ca.crt | sed 's/^/    /')
-
-marathon_principal: "$marathon_principal"
-
-marathon_secret: "$marathon_secret"
-
-marathon_ssl_key: |
-$(cat ${CERT_DIR}/pki/private/marathon.key | sed 's/^/    /')
-
-marathon_ssl_crt: |
-$(cat ${CERT_DIR}/pki/issued/marathon.crt | sed 's/^/    /')
+mesos_credentials:
+$(echo -e $FRAMEWORK_CREDENTIALS | sed 's/^/    /')
+$(echo -e $AGENT_CREDENTIALS | sed 's/^/    /')
 EOF
 
-    cat > $group_vars_dir/mesos <<EOF
----
-ca_crt: |
-$(cat ${CERT_DIR}/pki/ca.crt | sed 's/^/    /')
-
-master_ssl_key: |
-$(cat ${CERT_DIR}/pki/private/mesos.key | sed 's/^/    /')
-
-master_ssl_crt: |
-$(cat ${CERT_DIR}/pki/issued/mesos.crt | sed 's/^/    /')
-
-mesos_credentials: |
-    $marathon_principal $marathon_secret
-$(IFS=$'\n'; echo "${agent_credentials[*]}" | sed 's/^/    /')
-EOF
-
+    echo -e "\033[0;33mEncrypt mesos credentials with ansible-vault\033[0m"
     local attempt=0
     while true; do
-        if ! ansible-vault encrypt $group_vars_dir/* $host_vars_dir/*; then
+        if ! ansible-vault encrypt $group_vars_dir/all; then
             if (( attempt > 4 )); then
                 exit 1
             fi
@@ -339,14 +295,14 @@ function mesos-up {
     generate-inventory-file $REDCELL_ROOT/ansible/hosts
 
     echo -e "\033[0;32mGenerate certificates and credentials\033[0m"
-    make-certs-and-credentials
+    make-credentials
 
     if [[ $NO_ANSIBLE_INSTALL == "true" ]]; then
         echo -e "\033[0;32mAnsible install playbook is ready to be used\033[0m"
         exit 0
     fi
 
-    sleep 10
+    sleep 5
 
     echo -e "\033[0;32mRun Ansible install playbook\033[0m"
     cd $REDCELL_ROOT/ansible

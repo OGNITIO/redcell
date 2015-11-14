@@ -12,5 +12,7 @@ export MESOS_MASTER=zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['
 # Definition of the attributes
 export MESOS_ATTRIBUTES="hostname:{{var_hostname}};{{mesos_attributes}}"
 
+{% if mesos_credentials is defined %}
 export MESOS_AUTHENTICATEE=crammd5
 export MESOS_CREDENTIAL=/srv/mesos/agent/credential
+{% endif %}

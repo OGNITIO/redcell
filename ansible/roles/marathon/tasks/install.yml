@@ -26,12 +26,12 @@
 
 - name: Create marathon credential directory
   file: path="{{marathon_credential_dir}}" state=directory recurse=yes
-  when: marathon_principal is defined and marathon_secret is defined
+  when: mesos_credentials is defined
   
 - name: Create marathon authentication credential file
   template: src=marathon_credential.j2 dest="{{marathon_credential_file}}" mode=0600
   no_log: true
-  when: marathon_principal is defined and marathon_secret is defined
+  when: mesos_credentials is defined
   
 - name: Start marathon
   service: name=marathon state=started

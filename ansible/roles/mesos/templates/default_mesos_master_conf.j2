@@ -9,7 +9,9 @@ export MESOS_QUORUM={{mesos_master_quorum}}
 # Definition of the mesos-master port
 export MESOS_PORT={{mesos_masters_port}}
 
+{% if mesos_credentials is defined %}
 export MESOS_AUTHENTICATE=true
 export MESOS_AUTHENTICATE_SLAVES=true
 export MESOS_AUTHENTICATORS=crammd5
 export MESOS_CREDENTIALS=/srv/mesos/credentials
+{% endif %}
