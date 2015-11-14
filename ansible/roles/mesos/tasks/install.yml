@@ -43,7 +43,7 @@
 - name: Create mesos credentials file
   lineinfile: dest="{{mesos_credentials_file}}" line="{{item.key}} {{item.value}}" create=yes mode=0600
   no_log: true
-  with_dict: "{{mesos_credentials}}"
+  with_dict: "{{mesos_credentials | default({})}}"
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
   
 - name: Set the mesos slave to manual launch

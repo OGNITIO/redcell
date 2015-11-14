@@ -5,9 +5,16 @@
 # Note: At the moment, only the mesos cluster credentials get upgraded
 #
 
+- name: Copy mesos configuration
+  template: src=default_mesos_conf.j2 dest=/etc/default/mesos
+
 # Mesos master upgrade tasks
 - name: Stop service mesos-master
   service: name=mesos-master state=stopped
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Copy mesos-master configuration
+  template: src=default_mesos_master_conf.j2 dest=/etc/default/mesos-master
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
 - name: Remove old mesos credentials file
@@ -17,7 +24,7 @@
 - name: Upgrade mesos credentials
   lineinfile: dest="{{mesos_credentials_file}}" line="{{item.key}} {{item.value}}" create=yes mode=0600
   no_log: true
-  with_dict: "{{mesos_credentials}}"
+  with_dict: "{{mesos_credentials | default({})}}"
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
 
 - name: Start service mesos-master
@@ -27,6 +34,10 @@
 # Mesos slave upgrade tasks
 - name: Stop service mesos-slave
   service: name=mesos-slave state=stopped
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Copy the mesos-slave configuration
+  template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
 
 - name: Remove old mesos agent credential file
