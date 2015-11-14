@@ -3,7 +3,7 @@
 #
 
 - include: testing.yml
-  when: test == "true"
+  when: playbook_mode == "testing"
 
 - include: install.yml
-  when: test != "true"
+  when: playbook_mode == "install"

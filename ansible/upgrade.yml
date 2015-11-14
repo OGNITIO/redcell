@@ -1,0 +1,18 @@
+- name: Upgrade Apache Mesos masters and slaves
+  hosts: mesos
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "upgrade"
+  roles:
+    - mesos
+
+- name: Upgrade Marathon schedulers
+  hosts: marathon
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "upgrade"
+  roles:
+    - marathon
+    

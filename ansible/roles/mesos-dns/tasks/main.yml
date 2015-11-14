@@ -3,4 +3,4 @@
 #
 
 - include: install.yml
-  when: test != "true"
+  when: playbook_mode == "install"

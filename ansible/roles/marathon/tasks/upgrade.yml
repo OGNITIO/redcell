@@ -1,0 +1,20 @@
+# tasks/upgrade.yml
+
+#
+# Upgrade framework marathon
+# Note: At the moment, only the mesos cluster credentials get upgraded
+#
+
+- name: Stop service marathon
+  service: name=marathon state=stopped
+
+- name: Copy marathon configuration file
+  template: src=default_marathon_conf.j2 dest=/etc/sysconfig/marathon
+
+- name: Create marathon authentication credential file
+  template: src=marathon_credential.j2 dest="{{marathon_credential_file}}" mode=0600
+  no_log: true
+  when: mesos_credentials is defined
+  
+- name: Start service marathon
+  service: name=marathon state=started

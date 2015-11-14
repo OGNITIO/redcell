@@ -3,7 +3,7 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    test: "{{ testing }}"
+    playbook_mode: "install"
   roles:
     - hostname
     - users
@@ -20,7 +20,7 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    test: "{{ testing }}"
+    playbook_mode: "install"
   roles:
     - mesos-dns
    
@@ -29,7 +29,7 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    test: "{{ testing }}"
+    playbook_mode: "install"
   roles:
     - zookeeper
    
@@ -38,7 +38,7 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    test: "{{ testing }}"
+    playbook_mode: "install"
   roles:
     - mesos
 
@@ -47,6 +47,6 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    test: "{{ testing }}"
+    playbook_mode: "install"
   roles:
     - marathon

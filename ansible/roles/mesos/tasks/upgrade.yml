@@ -1,0 +1,43 @@
+# tasks/upgrade.yml
+
+#
+# Upgrade mesos cluster
+# Note: At the moment, only the mesos cluster credentials get upgraded
+#
+
+# Mesos master upgrade tasks
+- name: Stop service mesos-master
+  service: name=mesos-master state=stopped
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Remove old mesos credentials file
+  file: path="{{mesos_credentials_file}}" state=absent
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+- name: Upgrade mesos credentials
+  lineinfile: dest="{{mesos_credentials_file}}" line="{{item.key}} {{item.value}}" create=yes mode=0600
+  no_log: true
+  with_dict: "{{mesos_credentials}}"
+  when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
+
+- name: Start service mesos-master
+  service: name=mesos-master state=started
+  when: mesos_mode == "master" or mesos_mode == "master-slave"
+
+# Mesos slave upgrade tasks
+- name: Stop service mesos-slave
+  service: name=mesos-slave state=stopped
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Remove old mesos agent credential file
+  file: path="{{mesos_slave_credential_file}}" state=absent
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
+
+- name: Upgrade mesos agent credential
+  lineinfile: dest="{{mesos_slave_credential_file}}" line="{{var_hostname}} {{mesos_credentials[var_hostname]}}" create=yes mode=0600
+  no_log: true
+  when: (mesos_mode == "slave" or mesos_mode == "master-slave") and mesos_credentials is defined
+
+- name: Start service mesos-slave
+  service: name=mesos-slave state=started
+  when: mesos_mode == "slave" or mesos_mode == "master-slave"
