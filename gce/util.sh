@@ -451,7 +451,7 @@ case "$cmd" in
     stop)
         mesos-down
         ;;
-    generate-credentials)
+    update-credentials)
         echo -e "\033[0;32mGenerate new cluster credentials\033[0m"
         make-credentials
         ;;
