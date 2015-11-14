@@ -294,7 +294,7 @@ function mesos-up {
     echo -e "\033[0;32mGenerate Ansible inventory file: $PROJECT\033[0m"
     generate-inventory-file $REDCELL_ROOT/ansible/hosts
 
-    echo -e "\033[0;32mGenerate certificates and credentials\033[0m"
+    echo -e "\033[0;32mGenerate credentials\033[0m"
     make-credentials
 
     if [[ $NO_ANSIBLE_INSTALL == "true" ]]; then
@@ -430,7 +430,7 @@ while :; do
 
     case "$opt" in
         --no-ansible-install)
-            NO_ANSIBLE_INSTALL=true;;
+            NO_ANSIBLE_INSTALL="true" ;;
         *)
             break ;;
     esac
@@ -444,12 +444,16 @@ cmd="$1"
 [ -n "$1" ] && shift # scrape off command
 case "$cmd" in
     run)
-        # Generate admin private key
+        echo -e "\033[0;32mGenerate admin rsa key-pair\033[0m"
         ssh-keygen -b 2048 -t rsa -f $ADMIN_PRIVATE_KEY -q -N ""
         mesos-up
         ;;
     stop)
         mesos-down
+        ;;
+    generate-credentials)
+        echo -e "\033[0;32mGenerate new cluster credentials\033[0m"
+        make-credentials
         ;;
     ansible)
         cd $REDCELL_ROOT/ansible
