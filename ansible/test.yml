@@ -4,7 +4,7 @@
   sudo: yes
   vars:
     local: "true"
-    test: "{{ testing }}"
+    playbook_mode: "testing"
   roles:
     - users
     - sudoers
