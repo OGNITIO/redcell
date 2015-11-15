@@ -1,6 +1,6 @@
 # tasks/main.yml
 
-# Install or test Apache Mesos
+# Apache Mesos role
 ---
 - include: test.yml
   when: playbook_mode == "test"
