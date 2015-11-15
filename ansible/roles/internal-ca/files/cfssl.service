@@ -1,0 +1,13 @@
+[Unit]
+Description=CFSSL issuing service
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/go/bin/cfssl serve -ca-key /srv/pki/internal-ca-key -ca /srv/pki/internal-ca -config /srv/pki/config_internal-ca.json
+Restart=always
+RestartSec=20
+KillMode=SIGKILL
+
+[Install]
+WantedBy=multi-user.target

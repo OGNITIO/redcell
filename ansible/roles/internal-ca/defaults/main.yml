@@ -1,0 +1,6 @@
+# defaults/main.yml
+
+# CFSSL default variables
+---
+go_tarball: "go1.5.1.linux-amd64.tar.gz"
+go_download_location: "http://golang.org/dl/{{ go_tarball }}"

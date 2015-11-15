@@ -1,0 +1,6 @@
+# tasks/main.yml
+
+# CFSSL issuing server role
+---
+- include: install.yml
+  when: playbook_mode == "install"

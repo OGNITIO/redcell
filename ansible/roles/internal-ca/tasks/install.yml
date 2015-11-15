@@ -1,0 +1,48 @@
+# tasks/install.yml
+
+# Install and configure remote CFSSL server
+---
+- name: Install dependencies packages
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - build-essential
+    - libltdl3-dev
+    - git
+
+- name: Download the Go tarball
+  get_url: url={{ go_download_location }} dest=/usr/local/src/{{ go_tarball }}
+
+- name: Extract the Go tarball
+  command: tar -C /usr/local -xf /usr/local/src/{{ go_tarball }}
+
+- name: Create Go path directory
+  file: path=/go state=directory
+  
+- name: Install CFSSL
+  command: /usr/local/go/bin/go get -u github.com/cloudflare/cfssl/cmd/...
+  environment:
+    GOPATH: /go
+
+- name: Create pki directory
+  file: path=/srv/pki state=directory recurse=yes
+
+- name: Copy intermediate ca certificate
+  template: src=internal-ca.pem.j2 dest=/srv/pki/internal-ca.pem mode=0600
+  no_log: true
+
+- name: Copy intermediate ca key
+  template: src=internal-ca-key.pem.j2 dest=/srv/pki/internal-ca-key.pem mode=0600
+  no_log: true
+
+- name: Copy intermediate ca csr
+  template: src=internal-ca.csr.j2 dest=/srv/pki/internal-ca.csr mode=0600
+  no_log: true
+
+- name: Copy internal ca configuration file
+  copy: src=config_internal-ca.json dest=/srv/pki/config_internal-ca.json
+
+- name: Copy cfssl.service file
+  copy: src=cfssl.service dest=/lib/systemd/system/cfssl.service
+
+- name: Run cfssl service
+  service: name=cfssl state=started
