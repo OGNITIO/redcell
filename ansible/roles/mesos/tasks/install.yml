@@ -1,9 +1,7 @@
 # tasks/install.yml
 
-#
 # Install and configure Apache Mesos.
-#
-
+---
 - name: Add apt_key for repos.mesosphere.io repo
   apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
 

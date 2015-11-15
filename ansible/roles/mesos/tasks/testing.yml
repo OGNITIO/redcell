@@ -1,7 +1,7 @@
-#
-# Testing Apache Mesos
-#
+# tasks/testing.yml
 
+# Apache Mesos testing
+---
 - name: Copy checking script
   template: src=mesos_check.sh.j2 dest=/tmp/mesos_check.sh mode=0744
 

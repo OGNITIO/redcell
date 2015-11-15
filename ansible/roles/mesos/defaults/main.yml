@@ -1,7 +1,7 @@
-#
-# Mesos automation role variables.
-#
+# defaults/main.yml
 
+# Mesos automation role variables.
+---
 # General configuration
 # Definition of the ULIMIT of the process
 mesos_ulimit: "-n 8191"

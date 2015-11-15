@@ -1,7 +1,7 @@
-#
-# Install or test Apache Mesos
-#
+# tasks/main.yml
 
+# Install or test Apache Mesos
+---
 - include: testing.yml
   when: playbook_mode == "testing"
 

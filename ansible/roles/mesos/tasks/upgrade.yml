@@ -1,10 +1,8 @@
 # tasks/upgrade.yml
 
-#
-# Upgrade mesos cluster
+# Upgrade Mesos masters and agents
 # Note: At the moment, only the mesos cluster credentials get upgraded
-#
-
+---
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos
 
