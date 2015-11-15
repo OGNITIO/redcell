@@ -1,4 +1,4 @@
-# tasks/testing.yml
+# tasks/test.yml
 
 # Apache Mesos testing
 ---

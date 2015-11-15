@@ -2,8 +2,8 @@
 
 # Install or test Apache Mesos
 ---
-- include: testing.yml
-  when: playbook_mode == "testing"
+- include: test.yml
+  when: playbook_mode == "test"
 
 - include: install.yml
   when: playbook_mode == "install"
