@@ -34,10 +34,6 @@
   template: src=internal-ca-key.pem.j2 dest=/srv/pki/internal-ca-key.pem mode=0600
   no_log: true
 
-- name: Copy intermediate ca csr
-  template: src=internal-ca.csr.j2 dest=/srv/pki/internal-ca.csr mode=0600
-  no_log: true
-
 - name: Copy internal ca configuration file
   copy: src=config_internal-ca.json dest=/srv/pki/config_internal-ca.json
 
