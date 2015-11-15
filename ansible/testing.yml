@@ -1,0 +1,12 @@
+- name: Hosts default configuration
+  hosts: all
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    local: "true"
+    playbook_mode: "install"
+  roles:
+    - users
+    - sudoers
+    - apt
+    - debian-auto-upgrade
