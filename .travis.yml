@@ -12,7 +12,7 @@ install:
 
 script:
   # Check the role/playbook's syntax.
-  - ansible-playbook -i ansible/hosts.localhost ansible/test.yml --syntax-check
+  - ansible-playbook -i ansible/hosts.localhost ansible/testing.yml --syntax-check
 
   # Run the role/playbook with ansible-playbook.
-  - ansible-playbook -i ansible/hosts.localhost ansible/test.yml --connection=local --sudo
+  - ansible-playbook -i ansible/hosts.localhost ansible/testing.yml --connection=local --sudo
