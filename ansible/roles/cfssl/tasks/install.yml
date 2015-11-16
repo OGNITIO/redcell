@@ -1,0 +1,6 @@
+# tasks/install.yml
+
+# Install CFSSL
+--
+- name: Install CFSSL
+  command: go get -u github.com/cloudflare/cfssl/cmd/...
