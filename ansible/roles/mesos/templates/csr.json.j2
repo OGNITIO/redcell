@@ -1,0 +1,17 @@
+{
+    "CN": "{{var_hostname}}",
+    "hosts": [
+        "{{var_hostname}}",
+        "{{inventory_hostname}}",
+        "{{hostvars[inventory_hostname]['ansible_eth0']['ipv4']['address']}}"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "OU": "{{csr_organisational_unit}}",
+        }
+    ]
+}
