@@ -1,7 +1,7 @@
 {
     "signing": {
         "default": {
-            "expiry": "8760h"
+            "expiry": "2160h"
         },
         "profiles": {
             "mesos-master": {
@@ -11,7 +11,7 @@
                     "server auth",
                     "client auth"
                 ],
-                "expiry": "8760h"
+                "expiry": "2160h"
             },
             "mesos-agent": {
                 "usages": [
@@ -20,7 +20,7 @@
                     "server auth",
                     "client auth"
                 ],
-                "expiry": "8760h"
+                "expiry": "2160h"
             },
             "mesos-framework": {
                 "usages": [
@@ -29,7 +29,7 @@
                     "server auth",
                     "client auth"
                 ],
-                "expiry": "8760h"
+                "expiry": "2160h"
             }
         }
     }

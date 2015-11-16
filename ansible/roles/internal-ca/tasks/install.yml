@@ -2,27 +2,6 @@
 
 # Install and configure remote CFSSL server
 ---
-- name: Install dependencies packages
-  apt: pkg={{item}} state=present update_cache=yes
-  with_items:
-    - build-essential
-    - libltdl3-dev
-    - git
-
-- name: Download the Go tarball
-  get_url: url={{ go_download_location }} dest=/usr/local/src/{{ go_tarball }}
-
-- name: Extract the Go tarball
-  command: tar -C /usr/local -xf /usr/local/src/{{ go_tarball }}
-
-- name: Create Go path directory
-  file: path=/go state=directory
-  
-- name: Install CFSSL
-  command: /usr/local/go/bin/go get -u github.com/cloudflare/cfssl/cmd/...
-  environment:
-    GOPATH: /go
-
 - name: Create pki directory
   file: path=/srv/pki state=directory recurse=yes
 
