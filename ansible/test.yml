@@ -10,3 +10,4 @@
     - sudoers
     - apt
     - debian-auto-upgrade
+    - golang

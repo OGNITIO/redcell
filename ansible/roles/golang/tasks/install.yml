@@ -1,0 +1,22 @@
+# tasks/install.yml
+
+# Install and configure golang
+---
+- name: Install dependencies packages
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - build-essential
+    - libltdl3-dev
+    - git
+
+- name: Download the Go tarball
+  get_url: url={{ go_download_location }} dest=/usr/local/src/{{ go_tarball }}
+
+- name: Extract the Go tarball
+  command: tar -C /usr/local -xf /usr/local/src/{{ go_tarball }}
+
+- name: Create Go path directory
+  file: path={{go_path}} state=directory
+
+- name: Add the Go bin directory to the PATH environment variable for all users
+  template: src=golang-path.sh.j2 dest=/etc/profile.d/golang-path.sh

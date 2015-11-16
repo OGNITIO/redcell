@@ -10,6 +10,7 @@
     - sudoers
     - apt
     - debian-auto-upgrade
+    - golang
     - docker
     - fluentd-es
     - telegraf
