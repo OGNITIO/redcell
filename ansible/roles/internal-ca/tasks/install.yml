@@ -42,3 +42,6 @@
 
 - name: Run cfssl service
   service: name=cfssl state=started
+
+- name: Waiting for cfssl port to become available
+  wait_for: port=8888 delay=10
