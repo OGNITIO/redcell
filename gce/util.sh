@@ -99,7 +99,7 @@ function generate-inventory-file {
 # Generate mesos agent credentials
 #
 # Vars set:
-# AGENT_CREDENTIALS
+#       AGENT_CREDENTIALS
 function make-agent-credentials {
     local agent_external_ips=($($GCLOUD_CMD instances list \
                                             --regexp="${MESOS_AGENT_NAME}.*" \
@@ -127,7 +127,7 @@ function make-agent-credentials {
 # $1: The framework's name
 #
 # Vars set:
-# FRAMEWORK_CREDENTIALS
+#       FRAMEWORK_CREDENTIALS
 function make-framework-credentials {
     local principal="mesos-framework-$1"
     local secret=$(python -c 'import string,random; \
@@ -142,12 +142,98 @@ function make-framework-credentials {
 # Generate necessary mesos credentials
 #
 # Vars set:
-# AGENT_CREDENTIALS
-# FRAMEWORK_CREDENTIALS
+#       AGENT_CREDENTIALS
+#       FRAMEWORK_CREDENTIALS
 function make-credentials {
     make-agent-credentials
     make-framework-credentials "marathon"
+}
 
+# Generate cluster certificates
+#
+# Vars set:
+#       ROOT_CA_CERT
+#       INTERNAL_CA_KEY
+#       INTERNAL_CA_CERT
+function make-certs {
+    local root_ca_dir=$(pwd)/root-ca
+    mkdir -p $root_ca_dir
+    cat > "$root_ca_dir/root-ca_csr.json" <<EOF
+{
+    "CN": "Root CA",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+        }
+    ]
+}
+EOF
+
+    cat > "$root_ca_dir/config_root-ca.json" <<EOF
+{
+    "signing": {
+        "default": {
+            "expiry": "4320h"
+        },
+        "profiles": {
+            "internal-ca": {
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "cert sign",
+                    "crl sign"
+                ],
+                "expiry": "4320h",
+                "is_ca": true
+            }
+        }
+    }
+}
+EOF
+
+    local internal_ca_dir=$(pwd)/internal-ca
+    mkdir -p $internal_ca_dir
+
+    cat > "$internal_ca_dir/internal-ca_csr.json" <<EOF
+{
+    "CN": "Internal CA",
+    "hosts": [
+        ""
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+        }
+    ]
+}
+EOF
+
+    cfssl genkey -initca "$root_ca_dir/root-ca_csr.json" | cfssljson -bare "$root_ca_dir/root-ca"
+    cfssl gencert -ca "$root_ca_dir/root-ca.pem" \
+          -ca-key "$root_ca_dir/root-ca-key.pem" \
+          -config="$root_ca_dir/config_root-ca.json" \
+          -profile="internal-ca" "$internal_ca_dir/internal-ca_csr.json" | cfssljson -bare "$internal_ca_dir/internal-ca"
+
+    ROOT_CA_CERT=$(cat "$root_ca_dir/root-ca.pem")
+    INTERNAL_CA_CERT=$(cat "$internal_ca_dir/internal-ca.pem")
+    INTERNAL_CA_KEY=$(cat "$internal_ca_dir/internal-ca-key.pem")
+}
+
+# Prepare and encrypt hosts variables
+#
+# Assumed vars:
+#       ROOT_CA_CERT
+#       INTERNAL_CA_CERT
+#       INTERNAL_CA_KEY
+#       FRAMEWORK_CREDENTIALS
+#       AGENT_CREDENTIALS
+function prepare-nodes-variables {
     local group_vars_dir=$REDCELL_ROOT/ansible/group_vars
     rm -rf $group_vars_dir && mkdir -p $group_vars_dir
     cat > "$group_vars_dir/all" <<EOF
@@ -155,12 +241,25 @@ function make-credentials {
 mesos_credentials:
 $(echo -e $FRAMEWORK_CREDENTIALS | sed 's/^/    /')
 $(echo -e $AGENT_CREDENTIALS | sed 's/^/    /')
+
+root_ca_cert: |
+$(echo -e $ROOT_CA_CERT | sed 's/^/    /')
 EOF
 
-    echo -e "\033[0;33mEncrypt mesos credentials with ansible-vault\033[0m"
+    # Internal CA variables
+    cat > "$group_vars_dir/internal-ca" <<EOF
+---
+internal_ca: |
+$(echo -e $INTERNAL_CA_CERT | sed 's/^/    /')
+
+internal_ca_key: |
+$(echo -e $INTERNAL_CA_KEY | sed 's/^/    /')
+EOF
+
+    echo -e "\033[0;33mEncrypt nodes variables using ansible-vault\033[0m"
     local attempt=0
     while true; do
-        if ! ansible-vault encrypt $group_vars_dir/all; then
+        if ! ansible-vault encrypt $group_vars_dir/*; then
             if (( attempt > 4 )); then
                 exit 1
             fi
@@ -296,6 +395,11 @@ function mesos-up {
 
     echo -e "\033[0;32mGenerate credentials\033[0m"
     make-credentials
+
+    echo -e "\033[0;32mGenerate certificates\033[0m"
+    make-certs
+
+    prepare-nodes-variables
 
     if [[ $NO_ANSIBLE_INSTALL == "true" ]]; then
         echo -e "\033[0;32mAnsible install playbook is ready to be used\033[0m"
