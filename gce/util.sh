@@ -200,15 +200,13 @@ EOF
     cat > "$internal_ca_dir/internal-ca_csr.json" <<EOF
 {
     "CN": "Internal CA",
-    "hosts": [
-        ""
-    ],
     "key": {
         "algo": "rsa",
         "size": 2048
     },
     "names": [
         {
+           "OU": "Internal CA"
         }
     ]
 }
