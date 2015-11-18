@@ -28,6 +28,7 @@
 </source>
 {% endif %}
 
+{% if mesos_mode is defined %}
 {% if mesos_mode == 'master' or mesos_mode == 'master-slave' %}
 <source>
   type tail
@@ -48,6 +49,7 @@
   pos_file /var/log/mesos-slave.log.pos
   tag mesos-slave
 </source>
+{% endif %}
 {% endif %}
 
 <match **>
