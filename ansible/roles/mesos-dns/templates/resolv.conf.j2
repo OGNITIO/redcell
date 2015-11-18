@@ -1,5 +1,0 @@
-{% for host in groups['mesos-dns'] %}
-nameserver {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}
-{% endfor %}
-
-nameserver 8.8.8.8

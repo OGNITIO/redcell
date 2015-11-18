@@ -1,6 +1,6 @@
 {
     "zk": "zk://{% for host in groups['zookeeper'] %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:2181{% if not loop.last%},{% endif %}{% endfor %}/mesos",
-    "masters": [{% for host in groups['all'] %}"{% if hostvars[host]['mesos_mode'] == 'master' or hostvars[host]['mesos_mode'] == 'master-slave' %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:5050{% endif %}"{% if not loop.last%},{% endif %}{% endfor %}],
+    "masters": [{% for host in groups['mesos'] %}"{% if hostvars[host]['mesos_mode'] == 'master' or hostvars[host]['mesos_mode'] == 'master-slave' %}{{hostvars[host]['ansible_eth0']['ipv4']['address']}}:5050{% endif %}"{% if not loop.last%},{% endif %}{% endfor %}],
     "refreshSeconds": {{mesos_dns_refresh_seconds}},
     "ttl": 60,
     "domain": "{{mesos_dns_domain_name}}",

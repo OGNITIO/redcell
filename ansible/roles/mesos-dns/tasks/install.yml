@@ -24,9 +24,14 @@
 - name: Start Mesos-DNS service
   service: name=mesos-dns state=started
   when: "'mesos-dns' in group_names"
-  
-- name: Copy resolv.conf file
-  template: src=resolv.conf.j2 dest=/etc/resolv.conf
+
+- name: Remove name server dns IP addresses if it exists
+  lineinfile: dest=/etc/resolv.conf state=absent regexp="nameserver {{hostvar[item]['ansible_eth0']['ipv4']['address']}}"
+  with_items: "{{groups['mesos-dns']}}"
+
+- name: Add name server dns IP addresses
+  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="nameserver {{hostvar[item]['ansible_eth0']['ipv4']['address']}}"
+  with_items: "{{groups['mesos-dns']}}"
 
 - name: Make the resolv.conf file permanent
   command: chattr +i /etc/resolv.conf
