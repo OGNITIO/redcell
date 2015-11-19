@@ -1,6 +1,4 @@
 # meta/main.yml
-
-# CFSSL meta
 ---
 dependencies:
   - { role: golang }

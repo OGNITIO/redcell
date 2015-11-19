@@ -1,6 +1,18 @@
 # tasks/install.yml
 
 # Install CFSSL
---
-- name: Install CFSSL
+---
+- name: Install cfssl dependencies
+  apt: pkg=libltdl3-dev state=present update_cache=yes
+
+- name: Install cfssl
   command: go get -u github.com/cloudflare/cfssl/cmd/...
+  environment:
+    GOPATH: /go
+    PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin:/go"
+
+- name: Move cfssl binary
+  command: mv /go/bin/cfssl /usr/bin/cfssl
+
+- name: Move cfssljson binary
+  command: mv /go/bin/cfssljson /usr/bin/cfssljson
