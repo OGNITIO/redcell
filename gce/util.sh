@@ -50,10 +50,6 @@ function generate-inventory-file {
             --format=yaml | awk '/mesos-agent-attributes/{getline; print}' | \
                                      sed 's/^ *//' | cut -d ' ' -f 2))
 
-    local internal_ca_external_ips=($($GCLOUD_CMD instances list \
-            --regexp="internal-ca.*" \
-            --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
-
     local inventory_file=$1
 
     local all_host_vars="cluster_name=$CLOUD"
