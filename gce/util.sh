@@ -541,12 +541,13 @@ case "$cmd" in
         mesos-down
         ;;
     upgrade-credentials)
-        echo -e "\033[0;32mGenerate new cluster credentials\033[0m"
+        echo -e "\033[0;32mGenerate and update cluster credentials\033[0m"
         make-credentials
+        prepare-nodes-variables
         ;;
     ansible)
         cd $REDCELL_ROOT/ansible
-        ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" --ask-vault-pass install.yml ${@:2}
+        ansible-playbook -u admin --private-key="${ADMIN_PRIVATE_KEY}" --ask-vault-pass "${@:1}" install.yml
         ;;
     ""|help|-h|--help|--usage)
         opt_usage
