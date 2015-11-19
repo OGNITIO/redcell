@@ -1,0 +1,6 @@
+# tasks/main.yml
+
+# Golang role
+---
+- include: install.yml
+  when: playbook_mode == "install"
