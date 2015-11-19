@@ -263,6 +263,9 @@ function create-mesos-agents {
     source $1
 
     local mesos_agent_attributes="os:${MESOS_OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${MESOS_AGENT_ZONE}"
+    if [[ $MESOS_AGENT_ATTRIBUTES != "" ]]; then
+        mesos_agent_attributes="${mesos_agent_attributes};${MESOS_AGENT_ATTRIBUTES}"
+    fi
 
     $GCLOUD_CMD firewall-rules create "${mesos_agent_tag}-all" \
                 --project "${PROJECT}" \
