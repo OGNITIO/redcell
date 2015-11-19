@@ -26,11 +26,11 @@
   when: "'mesos-dns' in group_names"
 
 - name: Remove name server dns IP addresses if it exists
-  lineinfile: dest=/etc/resolv.conf state=absent regexp="nameserver {{hostvar[item]['ansible_eth0']['ipv4']['address']}}"
+  lineinfile: dest=/etc/resolv.conf state=absent regexp="nameserver {{hostvars[item]['ansible_eth0']['ipv4']['address']}}"
   with_items: "{{groups['mesos-dns']}}"
 
 - name: Add name server dns IP addresses
-  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="nameserver {{hostvar[item]['ansible_eth0']['ipv4']['address']}}"
+  lineinfile: dest=/etc/resolv.conf insertbefore=BOF line="nameserver {{hostvars[item]['ansible_eth0']['ipv4']['address']}}"
   with_items: "{{groups['mesos-dns']}}"
 
 - name: Make the resolv.conf file permanent
