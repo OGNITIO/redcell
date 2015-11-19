@@ -24,24 +24,7 @@
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos
 
-- name: Prepare pki directory
-  file: path={{mesos_pki_path}} state=directory recurse=yes
-
 # Mesos master tasks
-- name: Prepare mesos master pki directory
-  file: path="{{mesos_pki_path}}/master" state=directory recurse=yes
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
-
-- name: Copy mesos master certificate signing request configuration
-  template: src=csr.json dest="{{mesos_pki_path}}/master/csr.json"
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
-  set_fact:
-    csr_organisational_unit: "Mesos Master"
-
-- name: Generate mesos-master certificates
-  command: cfssl gencert -remote={{ca_remote_server}} "{{mesos_pki_path}}/master/csr.json" | cfssljson -bare "{{mesos_pki_path}}/master/mesos-master"
-  when: mesos_mode == "master" or mesos_mode == "master-slave"
-
 - name: Copy mesos-master configuration
   template: src=default_mesos_master_conf.j2 dest=/etc/default/mesos-master
   when: mesos_mode == "master" or mesos_mode == "master-slave"
@@ -78,20 +61,6 @@
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
 # Mesos slave tasks
-- name: Prepare mesos agent pki directory
-  file: path="{{mesos_pki_path}}/agent" state=directory recurse=yes
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
-
-- name: Copy mesos agent certificate signing request configuration
-  template: src=csr.json dest="{{mesos_pki_path}}/agent/csr.json"
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
-  set_fact:
-    csr_organisational_unit: "Mesos Agent"
-
-- name: Generate mesos-agent certificates
-  command: cfssl gencert -remote={{ca_remote_server}} "{{mesos_pki_path}}/agent/csr.json" | cfssljson -bare "{{mesos_pki_path}}/agent/mesos-agent"
-  when: mesos_mode == "slave" or mesos_mode == "master-slave"
-
 - name: Copy the mesos-slave configuration
   template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
