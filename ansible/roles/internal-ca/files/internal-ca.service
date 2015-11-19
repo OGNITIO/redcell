@@ -4,7 +4,7 @@ After=network.target
 Wants=network.target
 
 [Service]
-ExecStart=/go/bin/cfssl serve -ca-key /srv/pki/internal-ca-key -ca /srv/pki/internal-ca -config /srv/pki/config_internal-ca.json
+ExecStart=/usr/bin/cfssl serve -address 0.0.0.0 -ca-key /srv/pki/internal-ca-key.pem -ca /srv/pki/internal-ca.pem -config /srv/pki/config_internal-ca.json
 Restart=always
 RestartSec=20
 KillMode=SIGKILL

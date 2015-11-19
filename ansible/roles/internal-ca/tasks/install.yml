@@ -16,11 +16,11 @@
 - name: Copy internal ca configuration file
   copy: src=config_internal-ca.json dest=/srv/pki/config_internal-ca.json
 
-- name: Copy cfssl.service file
-  copy: src=cfssl.service dest=/lib/systemd/system/cfssl.service
+- name: Copy internal-ca.service file
+  copy: src=internal-ca.service dest=/lib/systemd/system/internal-ca.service
 
 - name: Run cfssl service
-  service: name=cfssl state=started
+  service: name=internal-ca state=started
 
 - name: Waiting for cfssl port to become available
   wait_for: port=8888 delay=10
