@@ -50,6 +50,10 @@ function generate-inventory-file {
             --format=yaml | awk '/mesos-agent-attributes/{getline; print}' | \
                                      sed 's/^ *//' | cut -d ' ' -f 2))
 
+    local internal_ca_external_ips=($($GCLOUD_CMD instances list \
+            --regexp="internal-ca.*" \
+            --format=yaml | grep -i natip | sed 's/^ *//' | cut -d ' ' -f 2))
+
     local inventory_file=$1
 
     local all_host_vars="cluster_name=$CLOUD"
@@ -200,6 +204,9 @@ EOF
     cat > "$internal_ca_dir/internal-ca_csr.json" <<EOF
 {
     "CN": "Internal CA",
+    "hosts": [
+        ""
+    ],
     "key": {
         "algo": "rsa",
         "size": 2048
@@ -218,17 +225,14 @@ EOF
           -config="$root_ca_dir/config_root-ca.json" \
           -profile="internal-ca" "$internal_ca_dir/internal-ca_csr.json" | cfssljson -bare "$internal_ca_dir/internal-ca"
 
-    ROOT_CA_CERT=$(cat "$root_ca_dir/root-ca.pem")
-    INTERNAL_CA_CERT=$(cat "$internal_ca_dir/internal-ca.pem")
-    INTERNAL_CA_KEY=$(cat "$internal_ca_dir/internal-ca-key.pem")
+    ROOT_CA_CERT=$(cat "$root_ca_dir/root-ca.pem" | base64 | tr -d '\r\n')
+    INTERNAL_CA_CERT=$(cat "$internal_ca_dir/internal-ca.pem" | base64 | tr -d '\r\n')
+    INTERNAL_CA_KEY=$(cat "$internal_ca_dir/internal-ca-key.pem" | base64 | tr -d '\r\n')
 }
 
 # Prepare and encrypt hosts variables
 #
 # Assumed vars:
-#       ROOT_CA_CERT
-#       INTERNAL_CA_CERT
-#       INTERNAL_CA_KEY
 #       FRAMEWORK_CREDENTIALS
 #       AGENT_CREDENTIALS
 function prepare-nodes-variables {
@@ -239,19 +243,6 @@ function prepare-nodes-variables {
 mesos_credentials:
 $(echo -e $FRAMEWORK_CREDENTIALS | sed 's/^/    /')
 $(echo -e $AGENT_CREDENTIALS | sed 's/^/    /')
-
-root_ca_cert: |
-$(echo -e $ROOT_CA_CERT | sed 's/^/    /')
-EOF
-
-    # Internal CA variables
-    cat > "$group_vars_dir/internal-ca" <<EOF
----
-internal_ca: |
-$(echo -e $INTERNAL_CA_CERT | sed 's/^/    /')
-
-internal_ca_key: |
-$(echo -e $INTERNAL_CA_KEY | sed 's/^/    /')
 EOF
 
     echo -e "\033[0;33mEncrypt nodes variables using ansible-vault\033[0m"
@@ -358,7 +349,7 @@ function mesos-up {
 
     # No instance template/group is created, as static ip addresses
     # will be created and assigned to each one of the master
-    # instances. 
+    # instances.
     for i in $(seq 1 $NUM_MESOS_MASTER); do
         $GCLOUD_CMD disks create "${mesos_master_tags[$i]}-pd" \
                --project "${PROJECT}" \
@@ -393,9 +384,6 @@ function mesos-up {
 
     echo -e "\033[0;32mGenerate credentials\033[0m"
     make-credentials
-
-    echo -e "\033[0;32mGenerate certificates\033[0m"
-    make-certs
 
     prepare-nodes-variables
 
