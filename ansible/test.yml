@@ -10,3 +10,6 @@
     - sudoers
     - apt
     - debian-auto-upgrade
+    - golang
+    - cfssl
+    - docker
