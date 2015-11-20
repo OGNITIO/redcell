@@ -3,9 +3,16 @@ language: python
 python: "2.7"
 
 services:
-    - docker
+  - docker
+
+before_install:
+  # Make sure everything's up to date.
+  - sudo apt-get update -qq
 
 install:
+  # Install ansible
+  - pip install ansible
+
   # Build Ansible image
   - cd ansible; docker build -t ansible-test .
 
