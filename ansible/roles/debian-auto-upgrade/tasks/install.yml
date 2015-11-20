@@ -7,15 +7,26 @@
   with_items:
     - unattended-upgrades
     - apt-listchanges
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Copy 20auto-upgrades
   template: src=20auto-upgrades.j2 dest=/etc/apt/apt.conf.d/20auto-upgrades
+  tags:
+    - configuration
 
 - name: Copy 02periodic
   template: src=02periodic.j2 dest=/etc/apt/apt.conf.d/02periodic
+  tags:
+    - configuration
 
 - name: Copy listchanges.conf
   template: src=listchanges.conf.j2 dest=/etc/apt/listchanges.conf
+  tags:
+    - configuration
 
 - name: Launch unattended-upgrade
   command: unattended-upgrade -d

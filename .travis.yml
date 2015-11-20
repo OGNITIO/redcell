@@ -10,5 +10,8 @@ install:
   - cd ansible; docker build -t ansible-test .
 
 script:
+  # Check the role/playbook's syntax.
+  - ansible-playbook -i hosts.localhost install.yml --syntax-check
+
   # Run Ansible testing playbook
   - docker run --privileged -t ansible-test

@@ -57,3 +57,6 @@ mesos_slave_credential_dir: "{{mesos_credentials_dir}}/agent"
 
 # Credential used to identify the slave to the master
 mesos_slave_credential_file: "{{mesos_slave_credential_dir}}/credential"
+
+# Default Mesos attributes
+mesos_attributes: ""

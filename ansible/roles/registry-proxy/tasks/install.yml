@@ -4,9 +4,13 @@
 
 - name: Create registry-proxy tmp folder
   file: path=/tmp/registry-proxy state=directory mode=0755
+  tags:
+    - configuration
 
 - name: Copy Dockerfile
   copy: src=Dockerfile dest=/tmp/registry-proxy
+  tags:
+    - configuration
 
 - name: Building registry-proxy docker image
   command: docker build -t registry-proxy /tmp/registry-proxy

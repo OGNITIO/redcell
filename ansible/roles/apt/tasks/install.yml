@@ -5,3 +5,8 @@
 - name: Install requirements
   apt: pkg={{item}} state=present update_cache=yes
   with_items: apt_packages
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration

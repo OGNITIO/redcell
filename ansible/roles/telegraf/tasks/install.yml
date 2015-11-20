@@ -4,15 +4,23 @@
 
 - name: Create telegraf conf folder
   file: path=/tmp/telegraf state=directory mode=0755
+  tags:
+    - configuration
 
 - name: Copy Dockerfile
   copy: src=Dockerfile dest=/tmp/telegraf
+  tags:
+    - configuration
 
 - name: Copy launch script (run.sh)
   copy: src=run.sh dest=/tmp/telegraf
+  tags:
+    - configuration
 
 - name: Copy Telegraf configuration file
   template: src=telegraf.conf.j2 dest=/tmp/telegraf/telegraf.conf
+  tags:
+    - configuration
 
 - name: Building Telegrafs docker images
   command: docker build -t telegraf /tmp/telegraf

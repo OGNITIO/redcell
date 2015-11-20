@@ -7,15 +7,31 @@
   with_items:
     - build-essential
     - git
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Download the Go tarball
   get_url: url={{ go_download_location }} dest=/usr/local/src/{{ go_tarball }}
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Extract the Go tarball
   command: tar -C /usr/local -xf /usr/local/src/{{ go_tarball }}
+  tags:
+    - configuration
 
 - name: Create Go path directory
   file: path={{go_path}} state=directory
+  tags:
+    - configuration
 
 - name: Add the Go bin directory to the PATH environment variable for all users
   template: src=golang-path.sh.j2 dest=/etc/profile.d/golang-path.sh
+  tags:
+    - configuration

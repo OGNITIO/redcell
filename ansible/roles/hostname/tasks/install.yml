@@ -5,6 +5,8 @@
 - name: Update the hostname
   template: src=hostname.j2 dest=/etc/hostname owner=root group=root mode=0644
   sudo: yes
+  tags:
+    - configuration
 
 - name: Update IPv4 hostname /etc/hosts
   lineinfile:
@@ -12,6 +14,8 @@
     state: present
     regexp: "^127.0.0.1"
     line: "127.0.0.1{{'\t'}}{{var_hostname}}{{'\t'}}localhost{{'\t'}}localhost.localdomain"
+  tags:
+    - configuration
 
 - name: Update IPv6 hostname /etc/hosts
   lineinfile:
@@ -19,6 +23,8 @@
     state: present
     regexp: "^::1"
     line: "::1{{'\t'}}{{var_hostname}}{{'\t'}}localhost{{'\t'}}ip6-localhost{{'\t'}}ip6-loopback"
+  tags:
+    - configuration
 
 - name: Restart remote hosts
   command: shutdown --no-wall -r +1 "Ansible updates triggered"

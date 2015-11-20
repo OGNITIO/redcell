@@ -3,7 +3,6 @@
   any_errors_fatal: true
   sudo: yes
   vars:
-    local: "true"
     playbook_mode: "install"
   roles:
     - users
@@ -13,3 +12,42 @@
     - golang
     - cfssl
     - docker
+    - fluentd-es
+    - telegraf
+    - registry-proxy
+
+- name: Mesos-DNS
+  hosts: [mesos-dns, all]
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "install"
+  roles:
+    - mesos-dns
+
+- name: Apache Zookeeper
+  hosts: zookeeper
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "install"
+  roles:
+    - zookeeper
+
+- name: Apache Mesos installation
+  hosts: mesos
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "install"
+  roles:
+    - mesos
+
+- name: Marathon schedulers
+  hosts: marathon
+  any_errors_fatal: true
+  sudo: yes
+  vars:
+    playbook_mode: "install"
+  roles:
+    - marathon

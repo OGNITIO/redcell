@@ -4,12 +4,21 @@
 
 - name: Add apt_key for gpg
   apt_key: keyserver=keyserver.ubuntu.com id=58118E89F3A912897C070ADBF76221572C52609D
+  tags:
+    - configuration
 
 - name: Add dockerproject repository
   apt_repository: repo="deb https://apt.dockerproject.org/repo {{docker_distrib_repo}}-{{docker_release_repo}} main" state=present
+  tags:
+    - configuration
 
 - name: Install Docker Engine
   apt: pkg="docker-engine" state=present update_cache=yes
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Start Docker-engine service
   service: name=docker state=started

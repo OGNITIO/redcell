@@ -4,30 +4,50 @@
 ---
 - name: Add apt_key for repos.mesosphere.io repo
   apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
+  tags:
+    - configuration
 
 - name: Add mesosphere repository
   apt_repository: repo="deb http://repos.mesosphere.io/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}} main" state=present
+  tags:
+    - configuration
 
-- name: Install packages needed for mesos
+- name: Install Mesos dependencies
   apt: pkg={{item}} state=present update_cache=yes
   with_items:
     - python-setuptools
     - python-dev
     - python-pip
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Install Apache Mesos
   apt: pkg="mesos" state=present install_recommends=no
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Install mesos.cli
   pip: name=mesos.cli
+  tags:
+    - configuration
 
 - name: Copy mesos configuration
   template: src=default_mesos_conf.j2 dest=/etc/default/mesos
+  tags:
+    - configuration
 
 # Mesos master tasks
 - name: Copy mesos-master configuration
   template: src=default_mesos_master_conf.j2 dest=/etc/default/mesos-master
   when: mesos_mode == "master" or mesos_mode == "master-slave"
+  tags:
+    - configuration
 
 - name: Copy master syslog configuration file
   copy: src=syslog-mesos-master.conf dest=/etc/syslog-ng/conf.d/mesos-master.conf
@@ -37,26 +57,30 @@
 - name: Create mesos credentials directory
   file: path="{{mesos_credentials_dir}}" state=directory recurse=yes
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
+  tags:
+    - configuration
 
 - name: Create mesos credentials file
   lineinfile: dest="{{mesos_credentials_file}}" line="{{item.key}} {{item.value}}" create=yes mode=0600
   no_log: true
   with_dict: "{{mesos_credentials | default({})}}"
   when: (mesos_mode == "master" or mesos_mode == "master-slave") and mesos_credentials is defined
+  tags:
+    - configuration
 
 - name: Set the mesos slave to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-slave.override
   when: mesos_mode == "master"
+  tags:
+    - configuration
 
 - name: Remove mesos-master.override
   file: path="/etc/init/mesos-master.override" state=absent
   when: mesos_mode == "master" or mesos_mode == "master-slave"
+  tags:
+    - configuration
 
-- name: Stop mesos slave service
-  service: name=mesos-slave state=stopped
-  when: mesos_mode == "master"
-
-- name: Start mesos master
+- name: Start mesos-master service
   service: name=mesos-master state=restarted
   when: mesos_mode == "master" or mesos_mode == "master-slave"
 
@@ -64,6 +88,8 @@
 - name: Copy the mesos-slave configuration
   template: src=default_mesos_slave_conf.j2 dest=/etc/default/mesos-slave
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  tags:
+    - configuration
 
 - name: Copy slave syslog configuration file
   copy: src=syslog-mesos-slave.conf dest=/etc/syslog-ng/conf.d/mesos-slave.conf
@@ -73,23 +99,33 @@
 - name: Create mesos agent credential directory
   file: path="{{mesos_slave_credential_dir}}" state=directory recurse=yes
   when: (mesos_mode == "slave" or mesos_mode == "master-slave") and mesos_credentials is defined
+  tags:
+    - configuration
 
 - name: Copy agent credential
   lineinfile: dest="{{mesos_slave_credential_file}}" line="{{var_hostname}} {{mesos_credentials[var_hostname]}}" create=yes mode=0600
   no_log: true
   when: (mesos_mode == "slave" or mesos_mode == "master-slave") and mesos_credentials is defined
+  tags:
+    - configuration
 
 - name: Set the mesos master to manual launch
   template: src=manual.j2 dest=/etc/init/mesos-master.override
   when: mesos_mode == "slave"
+  tags:
+    - configuration
 
 - name: Stop mesos master service
   service: name=mesos-master state=stopped
   when: mesos_mode == "slave"
+  tags:
+    - configuration
 
 - name: Remove mesos-slave.override file
   file: path="/etc/init/mesos-slave.override" state=absent
   when: mesos_mode == "slave" or mesos_mode == "master-slave"
+  tags:
+    - configuration
 
 - name: Start the mesos-slave service
   service: name=mesos-slave state=restarted

@@ -7,13 +7,22 @@
   with_items:
     - zookeeper
     - zookeeperd
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Copy myid conf file into /etc/zookeeper/conf/
   template: src=myid.j2 dest=/etc/zookeeper/conf/myid
   when: zookeeper_standalone != true
+  tags:
+    - configuration
 
 - name: Copy zoo.cfg conf file into /etc/zookeeper/conf/ (standalone)
   template: src=zoo.cfg.j2 dest=/etc/zookeeper/conf/zoo.cfg
+  tags:
+    - configuration
 
 - name: Restart zookeeper
   service: name=zookeeper state=restarted

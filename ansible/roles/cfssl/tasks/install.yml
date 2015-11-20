@@ -4,15 +4,26 @@
 ---
 - name: Install cfssl dependencies
   apt: pkg=libltdl3-dev state=present update_cache=yes
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Install cfssl
   command: go get -u github.com/cloudflare/cfssl/cmd/...
   environment:
     GOPATH: /go
     PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin:/go"
+  tags:
+    - configuration
 
 - name: Move cfssl binary
   command: mv /go/bin/cfssl /usr/bin/cfssl
+  tags:
+    - configuration
 
 - name: Move cfssljson binary
   command: mv /go/bin/cfssljson /usr/bin/cfssljson
+  tags:
+    - configuration

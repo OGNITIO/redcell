@@ -1,0 +1,14 @@
+[all]
+localhost var_hostname=localhost mesos_mode=master-slave cluster_name=localhost
+
+[mesos-dns]
+localhost
+
+[zookeeper]
+localhost zoo_id=0 zookeeper_standalone=true
+
+[mesos]
+localhost
+
+[marathon]
+localhost

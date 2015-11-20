@@ -4,6 +4,11 @@
 
 - name: Install sudo
   apt: name=sudo state=present
+  register: job_result
+  until: job_result|success
+  retries: 3
+  tags:
+    - configuration
 
 - name: Setting sudo group to NOPASSWD
   lineinfile:
@@ -12,3 +17,5 @@
     regexp: '^%sudo'
     line: '%sudo ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
+  tags:
+    - configuration

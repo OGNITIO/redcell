@@ -11,6 +11,4 @@ RUN apt-get update \
 ADD . /srv/redcell
 WORKDIR /srv/redcell
 
-RUN echo "[all]\nlocalhost var_hostname=localhost\n" > hosts
-
-CMD ansible-playbook test.yml --connection=local
+CMD ansible-playbook -i hosts.localhost test.yml --connection=local --tags "configuration"
