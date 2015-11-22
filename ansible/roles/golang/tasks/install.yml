@@ -11,7 +11,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Download the Go tarball
   get_url: url={{ go_download_location }} dest=/usr/local/src/{{ go_tarball }}

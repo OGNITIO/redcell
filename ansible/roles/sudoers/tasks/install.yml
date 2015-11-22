@@ -8,7 +8,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Setting sudo group to NOPASSWD
   lineinfile:

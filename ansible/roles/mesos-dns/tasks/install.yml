@@ -5,7 +5,7 @@
 - name: Remove package no needed
   apt: pkg="bind9" state=absent
   tags:
-    - configuration
+    - packages
 
 - name: Copy Mesos DNS tarball
   copy: src=mesos-dns.tar dest=/tmp/mesos-dns.tar

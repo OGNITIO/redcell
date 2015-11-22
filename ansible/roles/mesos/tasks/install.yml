@@ -5,12 +5,12 @@
 - name: Add apt_key for repos.mesosphere.io repo
   apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
   tags:
-    - configuration
+    - packages
 
 - name: Add mesosphere repository
   apt_repository: repo="deb http://repos.mesosphere.io/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}} main" state=present
   tags:
-    - configuration
+    - packages
 
 - name: Install Mesos dependencies
   apt: pkg={{item}} state=present update_cache=yes
@@ -22,7 +22,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Install Apache Mesos
   apt: pkg="mesos" state=present install_recommends=no
@@ -30,7 +30,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Install mesos.cli
   pip: name=mesos.cli

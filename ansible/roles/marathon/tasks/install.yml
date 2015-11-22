@@ -5,7 +5,7 @@
 - name: Add jessie-backports repo
   apt_repository: repo="deb http://http.debian.net/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}}-backports main" state=present
   tags:
-    - configuration
+    - packages
 
 - name: Installation of open-jdk-8 and Marathon
   apt: name={{item}} update_cache=yes
@@ -16,7 +16,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Create sysconfig directory
   file: path=/etc/sysconfig state=directory recurse=yes

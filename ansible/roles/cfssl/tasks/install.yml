@@ -8,7 +8,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Install cfssl
   command: go get -u github.com/cloudflare/cfssl/cmd/...

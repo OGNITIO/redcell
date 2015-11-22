@@ -11,7 +11,7 @@
   until: job_result|success
   retries: 3
   tags:
-    - configuration
+    - packages
 
 - name: Copy myid conf file into /etc/zookeeper/conf/
   template: src=myid.j2 dest=/etc/zookeeper/conf/myid

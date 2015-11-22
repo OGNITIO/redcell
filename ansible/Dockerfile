@@ -11,4 +11,4 @@ RUN apt-get update \
 ADD . /srv/redcell
 WORKDIR /srv/redcell
 
-CMD ansible-playbook -i hosts.localhost test.yml --connection=local --tags "configuration"
+CMD ansible-playbook -i hosts.localhost test.yml --connection=local --tags "configuration,packages"
