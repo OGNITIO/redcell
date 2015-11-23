@@ -2,11 +2,11 @@
 # Registry proxy role variables.
 #
 
-# Definition of the FORWARD_PORT env variable
-forward_port: 5000
+# SERVER_NAME env variable
+server_name: localhost
 
-# Definition of the REGISTRY_HOST env variable
+# REGISTRY_HOST env variable
 registry_hostname: registry.marathon.mesos
 
-# Definition of the REGISTRY_PORT env variable
+# REGISTRY_PORT env variable
 registry_port: 5000

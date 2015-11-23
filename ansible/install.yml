@@ -13,8 +13,6 @@
     - golang
     - cfssl
     - docker
-    - fluentd-es
-    - telegraf
     - registry-proxy
 
 - name: Mesos-DNS

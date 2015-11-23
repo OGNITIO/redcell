@@ -2,18 +2,24 @@
 # Configure and deploy registry-proxy
 #
 
-- name: Create registry-proxy tmp folder
-  file: path=/tmp/registry-proxy state=directory mode=0755
+- name: Install nginx package
+  apt: pkg=nginx state=present update_cache=yes
   tags:
-    - configuration
+    - packages
+
+- name: Stop nginx service
+  service: name=nginx state=stopped
+
+- name: Copy nginx wrapper
+  copy: src=registry-proxy dest=/usr/sbin/registry-proxy mode=0755
+
+- name: Copy registry-proxy service file
+  copy: src=registry-proxy.service dest=/lib/systemd/system/registry-proxy.service
 
 - name: Copy Dockerfile
-  copy: src=Dockerfile dest=/tmp/registry-proxy
+  template: src=default.conf.j2 dest=/etc/nginx/conf.d/default.conf
   tags:
     - configuration
 
-- name: Building registry-proxy docker image
-  command: docker build -t registry-proxy /tmp/registry-proxy
-
-- name: Run docker container
-  command: docker run --net=host --restart=always -d -e "FORWARD_PORT={{forward_port}}" -e "REGISTRY_HOST={{registry_hostname}}" -e "REGISTRY_PORT={{registry_port}}" registry-proxy
+- name: Start registry-proxy service
+  service: name=registry-proxy state=started

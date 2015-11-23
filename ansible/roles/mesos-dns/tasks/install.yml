@@ -19,8 +19,11 @@
   tags:
     - configuration
 
+- name: Create mesos-dns configuration directory
+  file: path="/etc/opt/mesos-dns" state=directory recurse=yes
+
 - name: Copy configuration file for Mesos DNS
-  template: src=config.json.j2 dest="/tmp/config.json"
+  template: src=config.json.j2 dest="/etc/opt/mesos-dns/config.json"
   when: "'mesos-dns' in group_names"
   tags:
     - configuration
@@ -30,7 +33,7 @@
   when: "'mesos-dns' in group_names"
   tags:
     - configuration
-  
+
 - name: Start Mesos-DNS service
   service: name=mesos-dns state=started
   when: "'mesos-dns' in group_names"

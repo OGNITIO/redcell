@@ -1,0 +1,12 @@
+[Unit]
+Description=Registry reverse proxy
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/usr/sbin/registry-proxy
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
