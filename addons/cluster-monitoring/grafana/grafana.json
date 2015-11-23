@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/grafana",
+            "image": "localhost:5001/containers/grafana",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
@@ -28,9 +28,9 @@
     "mem": 512,
     "constraints": [
         [
-            "hostname",
-            "LIKE",
-            "mesos-master-1.ognitio.net"
+            "dedicated",
+            "CLUSTER",
+            "monitoring/influxdb"
         ]
     ],
     "cmd": "/usr/sbin/grafana-server --config=/etc/grafana/grafana.ini"
