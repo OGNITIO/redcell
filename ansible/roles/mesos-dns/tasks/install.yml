@@ -21,6 +21,8 @@
 
 - name: Create mesos-dns configuration directory
   file: path="/etc/opt/mesos-dns" state=directory recurse=yes
+  tags:
+    - configuration
 
 - name: Copy configuration file for Mesos DNS
   template: src=config.json.j2 dest="/etc/opt/mesos-dns/config.json"
