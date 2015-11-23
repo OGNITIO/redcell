@@ -260,6 +260,8 @@ function create-mesos-agents {
     local mesos_agent_name="${MESOS_AGENT_NAME}-$(basename $1)"
     local mesos_agent_tag="${MESOS_AGENT_TAG}-$(basename $1)"
 
+    MESOS_AGENT_ATTRIBUTES=""
+
     source $1
 
     local mesos_agent_attributes="os:${MESOS_OS_DISTRIBUTION};machine_type:${MESOS_AGENT_TYPE};disk_type:${MESOS_AGENT_DISK_TYPE};zone:${MESOS_AGENT_ZONE}"
