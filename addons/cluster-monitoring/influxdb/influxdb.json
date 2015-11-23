@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/influxdb",
+            "image": "localhost:5001/containers/influxdb",
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
@@ -30,9 +30,9 @@
     "instances": 1,
     "constraints": [
         [
-            "hostname",
-            "LIKE",
-            "mesos-master-1.ognitio.net"
+            "dedicated",
+            "CLUSTER",
+            "monitoring/influxdb"
         ]
     ],
     "cmd": "/run.sh"
