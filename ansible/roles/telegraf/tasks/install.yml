@@ -24,6 +24,10 @@
 
 - name: Building Telegrafs docker images
   command: docker build -t telegraf /tmp/telegraf
+  environment:
+    DOCKER_HOST: "unix:///var/run/docker.sock"
 
 - name: Run docker command
   command: docker run --privileged=true --net=host --restart=always -d -v /proc:/mnt/proc:ro -v /sys:/sys:ro -v /var/run/docker.sock:/var/run/docker.sock:ro telegraf
+  environment:
+    DOCKER_HOST: "unix:///var/run/docker.sock"

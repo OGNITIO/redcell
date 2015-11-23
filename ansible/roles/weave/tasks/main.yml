@@ -3,4 +3,4 @@
 #
 
 - include: install.yml
-  when: playbook_mode == "install"
+  when: playbook_mode == "install" and (mesos_mode == "slave" or mesos_mode == "master-slave")

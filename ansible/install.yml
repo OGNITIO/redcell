@@ -41,6 +41,7 @@
     playbook_mode: "install"
   roles:
     - mesos
+    - weave
 
 - name: Marathon schedulers
   hosts: marathon

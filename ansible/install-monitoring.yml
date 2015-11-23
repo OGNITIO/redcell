@@ -5,5 +5,4 @@
   vars:
     playbook_mode: "install"
   roles:
-    - fluentd-es
     - telegraf
