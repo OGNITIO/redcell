@@ -19,9 +19,9 @@
     "mem": 1024,
     "constraints": [
         [
-            "hostname",
-            "LIKE",
-            "mesos-master-3.ognitio.net"
+            "dedicated",
+            "CLUSTER",
+            "monitoring/elasticsearch"
         ]
     ],
     "cmd": "/docker-entrypoint.sh elasticsearch --network.host 0.0.0.0"
