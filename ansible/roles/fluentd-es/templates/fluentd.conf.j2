@@ -2,7 +2,7 @@
   type tail
   path /var/lib/docker/containers/*/*-json.log
   pos_file /var/log/containers.log.pos
-  time_format %Y-%m-%dT%H:%M:%S
+  time_format %Y-%m-%d %H:%M:%S
   tag containers.*
   format json
   read_from_head true
@@ -12,7 +12,7 @@
 <source>
   type tail
   path /var/log/marathon/marathon.log
-  format none
+  format syslog
   pos_file /var/log/marathon.log.pos
   tag marathon
 </source>
@@ -33,8 +33,7 @@
 <source>
   type tail
   path /var/log/mesos/mesos-master.log
-  format /^[A-Z]*(?<time>[^\.]*)\.[0-9]* [0-9]* (?<source>[^\:]*):(?<line>[^\]]*)\] (?<message>.*)$/
-  time_format %m%d %H:%M:%S
+  format syslog
   pos_file /var/log/mesos-master.log.pos
   tag mesos-master
 </source>
@@ -44,8 +43,7 @@
 <source>
   type tail
   path /var/log/mesos/mesos-slave.log
-  format /^[A-Z]*(?<time>[^\.]*)\.[0-9]* [0-9]* (?<source>[^\:]*):(?<line>[^\]]*)\] (?<message>.*)$/
-  time_format %m%d %H:%M:%S
+  format syslog
   pos_file /var/log/mesos-slave.log.pos
   tag mesos-slave
 </source>
@@ -56,7 +54,11 @@
   type elasticsearch
   host elasticsearch.marathon.slave.mesos
   port 31020
+  logstash_format true
+  buffer_chunk_limit 512K
+  buffer_queue_limit 128
+  flush_interval 5s
+  max_retry_wait 300
   include_tag_key true
-  index_name fluentd
-  type_name fluentd
+  disable_retry_limit
 </match>
