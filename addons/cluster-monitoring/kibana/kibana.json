@@ -2,7 +2,7 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/kibana",
+            "image": "localhost:5001/containers/kibana",
             "privileged": true,
             "network": "BRIDGE",
             "parameters": [
@@ -10,7 +10,7 @@
                 { "key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24" }
             ],
             "portMappings": [
-                {"containerPort": 5601, "hostPort": 31020, "servicePort": 0, "protocol": "tcp"}
+                {"containerPort": 5601, "hostPort": 31021, "servicePort": 0, "protocol": "tcp"}
             ],
             "forcePullImage": true
         }
@@ -21,9 +21,9 @@
     "mem": 1024,
     "constraints": [
         [
-            "hostname",
-            "LIKE",
-            "mesos-master-1.ognitio.net"
+            "dedicated",
+            "CLUSTER",
+            "monitoring/elasticsearch"
         ]
     ],
     "cmd": "/kibana-4.2.0-linux-x64/bin/kibana -e http://elasticsearch.weave.local:9200"
