@@ -1,29 +1,51 @@
-#
+# tasks/install.yml
+
 # Install and run fluentd
-#
+---
+- name: Add fluentd td agent apt key
+  apt_key: url=https://packages.treasuredata.com/GPG-KEY-td-agent state=present validate_certs=no
+  tags:
+    - packages
 
-- name: Create fluentd conf folder
-  file: path=/tmp/fluentd/conf state=directory mode=0755 recurse=yes
+- name: Add fluentd repository
+  apt_repository: repo="deb http://packages.treasuredata.com/2/debian/jessie/ jessie contrib" state=present
+  tags:
+    - packages
+
+- name: Install depedencies
+  apt: pkg={{item}} state=present update_cache=yes
+  with_items:
+    - build-essential
+    - gcc
+    - ruby
+    - ruby-dev
+  tags:
+    - packages
+
+- name: Install fluentd td agent
+  apt: pkg=td-agent state=present update_cache=yes
+  tags:
+    - packages
+
+- name: Install fluentd elasticsearch plugin
+  command: /usr/sbin/td-agent-gem install fluent-plugin-elasticsearch
+  tags:
+    - packages
+
+- name: Prepare fluentd configuration directory
+  file: path=/etc/opt/fluentd state=directory recurse=yes
   tags:
     - configuration
 
-- name: Copy Dockerfile
-  copy: src=Dockerfile dest=/tmp/fluentd
+- name: Copy fluentd configuration file
+  template: src=fluentd.conf.j2 dest=/etc/opt/fluentd/fluentd.conf
   tags:
     - configuration
 
-- name: Copy fluentd configuration
-  template: src=fluentd.conf.j2 dest=/tmp/fluentd/conf/fluentd.conf
+- name: Install fluentd systemd configuration file
+  copy: src=fluentd.service dest=/lib/systemd/system/fluentd.service
   tags:
     - configuration
 
-- name: Create working directory
-  file: path=/var/lib/fluentd state=directory mode=0755
-  tags:
-    - configuration
-
-- name: Building fluentd docker image
-  command: docker build -t fluentd-es /tmp/fluentd
-
-- name: Run docker command
-  command: docker run --net=host --restart=always -d -v /var/log:/var/log:ro -v /var/lib/fluentd:/var/lib/fluentd:rw fluentd-es
+- name: Start fluentd service
+  service: name=fluentd state=started

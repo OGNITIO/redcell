@@ -1,0 +1,13 @@
+[Unit]
+Description=Fluentd agent
+After=network.target
+Wants=network.target
+
+[Service]
+ExecStart=/usr/sbin/td-agent --config /etc/opt/fluentd/fluentd.conf
+Restart=always
+RestartSec=20
+KillMode=SIGKILL
+
+[Install]
+WantedBy=multi-user.target

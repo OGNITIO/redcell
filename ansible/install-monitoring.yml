@@ -1,8 +1,0 @@
-- name: Install cluster monitoring agents
-  hosts: all
-  any_errors_fatal: true
-  sudo: yes
-  vars:
-    playbook_mode: "install"
-  roles:
-    - telegraf

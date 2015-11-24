@@ -1,7 +1,7 @@
-#
-# Install and configure Marathon
-#
+# tasks/install.yml
 
+# Install and configure Marathon
+---
 - name: Add jessie-backports repo
   apt_repository: repo="deb http://http.debian.net/{{ansible_distribution|lower}} {{ansible_distribution_release|lower}}-backports main" state=present
   tags:
@@ -35,9 +35,11 @@
   
 - name: Copy syslog configuration file
   copy: src=syslog-marathon.conf dest=/etc/syslog-ng/conf.d/marathon.conf
-  notify: Restart syslog-ng
   tags:
     - configuration
+
+- name: Restart syslog-ng service
+  service: name=syslog-ng state=restarted
 
 - name: Create marathon credential directory
   file: path="{{marathon_credential_dir}}" state=directory recurse=yes

@@ -1,18 +1,18 @@
-#
-# Handlers file for Marathon
-#
+# handlers/main.yml
 
+# Handlers file for Marathon
+---
 - name: Restart syslog-ng
   service: name=syslog-ng state=restarted
 
-# Task for start marathon
+# Task to start marathon
 - name: Start marathon
   service: name=marathon state=started
 
-# Task for stop marathon
+# Task to stop marathon
 - name: Stop marathon
   service: name=marathon state=stopped
 
-# Task for restart marathon
+# Task to restart marathon
 - name: Restart marathon
   service: name=marathon state=stopped
