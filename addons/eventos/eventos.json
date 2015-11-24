@@ -2,13 +2,13 @@
     "container": {
         "type": "DOCKER",
         "docker": {
-            "image": "localhost:5000/containers/eventos",
+            "image": "localhost:5001/containers/eventos",
             "network": "BRIDGE",
             "parameters": [
                 {"key": "hostname", "value": "eventos.weave.local"},
-                {"key": "env", "value": "WEAVE_CIDR=net:10.32.4.0/24"},
-                {"key": "env", "value": "SENTRY_PROJECT=ognitio"},
-                {"key": "env", "value": "SENTRY_DSN=https://a9cbd0ff64cc4c2a89f63d9ff1de746b:a741431548724d979de0cdee8d2c77e5@app.getsentry.com/56696"}
+                {"key": "env", "value": "WEAVE_CIDR=net:10.32.3.0/24"},
+                {"key": "env", "value": "SENTRY_PROJECT=none"},
+                {"key": "env", "value": "SENTRY_DSN=none"}
             ],
             "portMappings": [
                 {"containerPort": 1337, "hostPort": 31200, "servicePort": 0, "protocol": "tcp"}
