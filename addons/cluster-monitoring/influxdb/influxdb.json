@@ -6,7 +6,7 @@
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
-                { "containerPort": 8086, "hostPort": 31000, "servicePort": 0, "protocol": "tcp" }
+                { "containerPort": 8086, "hostPort": 31030, "servicePort": 0, "protocol": "tcp" }
             ],
             "parameters": [
                 { "key": "hostname", "value": "influxdb.weave.local" },

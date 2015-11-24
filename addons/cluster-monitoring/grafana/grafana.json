@@ -6,7 +6,7 @@
             "privileged": true,
             "network": "BRIDGE",
             "portMappings": [
-                { "containerPort": 3000, "hostPort": 31030, "servicePort": 0, "protocol": "tcp" }
+                { "containerPort": 3000, "hostPort": 31031, "servicePort": 0, "protocol": "tcp" }
             ],
             "parameters": [
                 { "key": "hostname", "value": "grafana.weave.local" },
